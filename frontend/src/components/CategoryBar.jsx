@@ -35,7 +35,7 @@ export default function CategoryBar({ activeCategory, onSelect }) {
   const scrollRef = useRef(null)
 
   useEffect(() => {
-    axios.get('/api/v1/wallpapers/categories')
+    axios.get(`${import.meta.env.VITE_API_URL}/api/v1/wallpapers/categories`)
       .then(r => setCategories(r.data))
       .catch(console.error)
   }, [])
