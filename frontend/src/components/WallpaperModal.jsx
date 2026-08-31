@@ -75,7 +75,7 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
               )}
             </div>
 
-            <a href={`/api/v1/wallpapers/${id}/download`}
+            <a href={`${import.meta.env.VITE_API_URL}/api/v1/wallpapers/${id}/download`}
                className="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl
                           bg-brand-400 text-black text-sm font-semibold
                           hover:bg-brand-500 transition-all hover:scale-105">
