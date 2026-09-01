@@ -42,14 +42,12 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
 
           {/* Imagen — click abre pantalla completa */}
           <div className="relative bg-black">
-            <a href={url_full} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}>
-              <img
-                src={url_full}
-                alt={title}
-                referrerPolicy="no-referrer"
-                className="w-full object-contain max-h-[65vh] mx-auto block cursor-zoom-in"
-              />
-            </a>
+            <img
+            src={url_full}
+            alt={title}
+            referrerPolicy="no-referrer"
+            className="w-full object-contain max-h-[65vh] mx-auto block"
+          />
 
             {/* Boton cerrar */}
             <button onClick={onClose}
