@@ -34,9 +34,9 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
   const format = file_format ? file_format.toUpperCase() : 'JPG'
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-4 px-4"
-         onClick={onClose}>
-      <div className="absolute inset-0 bg-black/95 backdrop-blur-md" />
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/95 backdrop-blur-md"
+        onClick={onClose}>
+      <div className="flex min-h-full items-center justify-center p-4"></div>
 
       <div className="relative z-10 w-full max-w-4xl rounded-2xl overflow-hidden
                       shadow-2xl ring-1 ring-white/10 my-auto"
@@ -48,7 +48,7 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
             src={url_full}
             alt={title}
             referrerPolicy="no-referrer"
-            className="w-full object-contain max-h-[70vh]"
+            className="w-full object-contain max-h-[70vh] mx-auto block"
           />
           {/* Boton cerrar */}
           <button onClick={onClose}
