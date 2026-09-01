@@ -1,4 +1,5 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 function generateDescription(title, tags, width, height, resolution_label) {
   const tagList = tags.slice(0, 5).join(', ')
@@ -15,6 +16,8 @@ function getAspectRatio(width, height) {
 }
 
 export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
+  const [related, setRelated] = useState([])
+
   useEffect(() => {
     if (!wallpaper) return
     const handler = (e) => { if (e.key === 'Escape') onClose() }
@@ -25,6 +28,13 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
       document.body.style.overflow = ''
     }
   }, [wallpaper, onClose])
+
+  useEffect(() => {
+    if (!wallpaper?.category_id) return
+    axios.get(`${import.meta.env.VITE_API_URL}/api/v1/wallpapers`, {
+      params: { category_id: wallpaper.category_id, per_page: 7, sort: 'popular' }
+    }).then(r => setRelated(r.data.items.filter(w => w.id !== wallpaper.id)))
+  }, [wallpaper?.category_id])
 
   if (!wallpaper) return null
 
@@ -40,30 +50,24 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
         <div className="relative w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10"
              onClick={e => e.stopPropagation()}>
 
-          {/* Imagen — click abre pantalla completa */}
+          {/* Imagen */}
           <div className="relative bg-black">
             <img
-            src={url_full}
-            alt={title}
-            referrerPolicy="no-referrer"
-            className="w-full object-contain max-h-[65vh] mx-auto block"
-          />
-
-            {/* Boton cerrar */}
+              src={url_full}
+              alt={title}
+              referrerPolicy="no-referrer"
+              className="w-full object-contain max-h-[65vh] mx-auto block"
+            />
             <button onClick={onClose}
               className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/70
                          text-gray-400 hover:text-white hover:bg-black
                          transition-all flex items-center justify-center text-sm font-bold">
               X
             </button>
-
-            {/* Badge resolucion */}
             <span className="absolute bottom-3 left-3 px-2 py-0.5 rounded
                              bg-black/70 backdrop-blur-sm text-gray-300 text-xs font-mono">
               {width}x{height} · {resolution_label}
             </span>
-
-            {/* Boton download sobre la imagen abajo derecha */}
             <a href={`${import.meta.env.VITE_API_URL}/api/v1/wallpapers/${id}/download`}
                onClick={e => e.stopPropagation()}
                className="absolute bottom-3 right-3 flex items-center gap-2 px-4 py-2 rounded-xl
@@ -75,8 +79,6 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
 
           {/* Info */}
           <div className="bg-surface-900 border-t border-white/5 p-4">
-
-            {/* Breadcrumb */}
             <nav className="text-xs text-gray-600 mb-2 truncate">
               <span>Home</span>
               <span className="mx-1">›</span>
@@ -111,6 +113,24 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
                     #{tag}
                   </button>
                 ))}
+              </div>
+            )}
+
+            {related.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-white/5">
+                <p className="text-gray-500 text-xs mb-2">Related wallpapers</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {related.slice(0, 6).map(w => (
+                    <img
+                      key={w.id}
+                      src={w.url_preview}
+                      alt={w.title}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-20 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={() => onTagSearch?.(w.tags?.[0])}
+                    />
+                  ))}
+                </div>
               </div>
             )}
           </div>
