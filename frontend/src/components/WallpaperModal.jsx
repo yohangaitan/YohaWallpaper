@@ -4,7 +4,7 @@ function generateDescription(title, tags, width, height, resolution_label) {
   const tagList = tags.slice(0, 5).join(', ')
   const ratio = width && height ? (width / height).toFixed(2) : null
   const orientation = ratio >= 1 ? 'landscape' : 'portrait'
-  return `Download this ${resolution_label} wallpaper (${width}×${height}) — ${title}. ` +
+  return `Download this ${resolution_label} wallpaper (${width}x${height}) — ${title}. ` +
     `A high-quality ${orientation} image featuring: ${tagList}. ` +
     `Perfect for desktop and mobile backgrounds.`
 }
@@ -29,9 +29,7 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
 
   if (!wallpaper) return null
 
-  const { id, title, media_type, url_full, file_format, resolution_label,
-          tags, source, width, height, category_id } = wallpaper
-
+  const { id, title, file_format, resolution_label, tags, source, width, height, url_full } = wallpaper
   const description = generateDescription(title, tags, width, height, resolution_label)
   const aspectRatio = width && height ? getAspectRatio(width, height) : null
   const format = file_format ? file_format.toUpperCase() : 'JPG'
@@ -40,27 +38,31 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
          onClick={onClose}>
       <div className="absolute inset-0 bg-black/95 backdrop-blur-md" />
-      <div className="relative z-10 w-full max-w-4xl rounded-2xl overflow-hidden
+
+      {/* Contenedor principal con scroll */}
+      <div className="relative z-10 w-full max-w-4xl max-h-[95vh] rounded-2xl overflow-y-auto
                       shadow-2xl ring-1 ring-white/10"
            onClick={e => e.stopPropagation()}>
 
+        {/* Boton cerrar fijo arriba */}
+        <button onClick={onClose}
+          className="sticky top-3 left-full z-20 -translate-x-11 w-8 h-8 rounded-full
+                     bg-black/70 text-gray-400 hover:text-white hover:bg-black
+                     transition-all flex items-center justify-center text-sm">
+          X
+        </button>
+
         {/* Imagen */}
-        <div className="relative bg-black">
+        <div className="relative bg-black -mt-8">
           <img
             src={url_full}
             alt={title}
             referrerPolicy="no-referrer"
-            className="w-full max-h-[75vh] object-contain"
+            className="w-full max-h-[60vh] object-contain"
           />
-          <button onClick={onClose}
-            className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/70
-                       text-gray-400 hover:text-white hover:bg-black
-                       transition-all flex items-center justify-center text-sm">
-            ✕
-          </button>
           <span className="absolute bottom-3 left-3 px-2 py-0.5 rounded
                            bg-black/70 backdrop-blur-sm text-gray-300 text-xs font-mono">
-            {width}×{height} · {resolution_label}
+            {width}x{height} · {resolution_label}
           </span>
         </div>
 
@@ -80,17 +82,17 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
             <div className="flex-1 min-w-0">
               <h2 className="text-white font-semibold text-base truncate">{title}</h2>
 
-              {/* Descripción autogenerada */}
+              {/* Descripcion */}
               <p className="text-gray-500 text-xs mt-1 leading-relaxed">
                 {description}
               </p>
 
-              {/* Ficha técnica */}
+              {/* Ficha tecnica */}
               <div className="flex flex-wrap gap-3 mt-3 text-xs text-gray-500">
-                <span>📐 {width}×{height}</span>
-                {aspectRatio && <span>⬜ {aspectRatio}</span>}
-                <span>🖼 {format}</span>
-                <span>✨ {resolution_label}</span>
+                <span>{width}x{height}</span>
+                {aspectRatio && <span>{aspectRatio}</span>}
+                <span>{format}</span>
+                <span>{resolution_label}</span>
               </div>
 
               {/* Tags */}
@@ -115,7 +117,7 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
                className="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl
                           bg-brand-400 text-black text-sm font-semibold
                           hover:bg-brand-500 transition-all hover:scale-105">
-              ↓ Download
+              Download
             </a>
           </div>
         </div>
