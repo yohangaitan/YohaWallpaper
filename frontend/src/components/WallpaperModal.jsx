@@ -15,7 +15,7 @@ function getAspectRatio(width, height) {
   return `${width / d}:${height / d}`
 }
 
-export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
+export default function WallpaperModal({ wallpaper, onClose, onTagSearch, onWallpaperSelect }) {
   const [related, setRelated] = useState([])
 
   useEffect(() => {
@@ -127,7 +127,7 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
                       alt={w.title}
                       referrerPolicy="no-referrer"
                       className="w-full h-20 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={() => onTagSearch?.(w.tags?.[0])}
+                      onClick={() => onWallpaperSelect?.(w)}
                     />
                   ))}
                 </div>

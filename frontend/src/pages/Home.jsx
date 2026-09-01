@@ -60,6 +60,7 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
         wallpaper={selected}
         onClose={() => setSelected(null)}
         onTagSearch={(tag) => { onSearch?.(tag) }}
+        onWallpaperSelect={setSelected}
       />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
