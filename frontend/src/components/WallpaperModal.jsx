@@ -1,5 +1,20 @@
 import { useEffect } from 'react'
 
+function generateDescription(title, tags, width, height, resolution_label) {
+  const tagList = tags.slice(0, 5).join(', ')
+  const ratio = width && height ? (width / height).toFixed(2) : null
+  const orientation = ratio >= 1 ? 'landscape' : 'portrait'
+  return `Download this ${resolution_label} wallpaper (${width}×${height}) — ${title}. ` +
+    `A high-quality ${orientation} image featuring: ${tagList}. ` +
+    `Perfect for desktop and mobile backgrounds.`
+}
+
+function getAspectRatio(width, height) {
+  const gcd = (a, b) => b === 0 ? a : gcd(b, a % b)
+  const d = gcd(width, height)
+  return `${width / d}:${height / d}`
+}
+
 export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
   useEffect(() => {
     if (!wallpaper) return
@@ -14,13 +29,17 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
 
   if (!wallpaper) return null
 
-  const { id, title, media_type, url_full, resolution_label, tags, source, width, height } = wallpaper
+  const { id, title, media_type, url_full, file_format, resolution_label,
+          tags, source, width, height, category_id } = wallpaper
+
+  const description = generateDescription(title, tags, width, height, resolution_label)
+  const aspectRatio = width && height ? getAspectRatio(width, height) : null
+  const format = file_format ? file_format.toUpperCase() : 'JPG'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
          onClick={onClose}>
       <div className="absolute inset-0 bg-black/95 backdrop-blur-md" />
-
       <div className="relative z-10 w-full max-w-4xl rounded-2xl overflow-hidden
                       shadow-2xl ring-1 ring-white/10"
            onClick={e => e.stopPropagation()}>
@@ -33,16 +52,12 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
             referrerPolicy="no-referrer"
             className="w-full max-h-[75vh] object-contain"
           />
-
-          {/* Botón cerrar */}
           <button onClick={onClose}
             className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/70
                        text-gray-400 hover:text-white hover:bg-black
                        transition-all flex items-center justify-center text-sm">
             ✕
           </button>
-
-          {/* Badge resolución sobre la imagen */}
           <span className="absolute bottom-3 left-3 px-2 py-0.5 rounded
                            bg-black/70 backdrop-blur-sm text-gray-300 text-xs font-mono">
             {width}×{height} · {resolution_label}
@@ -51,11 +66,32 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
 
         {/* Info */}
         <div className="bg-surface-900 border-t border-white/5 p-4">
-          <div className="flex items-start justify-between gap-4">
 
+          {/* Breadcrumb */}
+          <nav className="text-xs text-gray-600 mb-2">
+            <span>Home</span>
+            <span className="mx-1">›</span>
+            <span className="capitalize">{source}</span>
+            <span className="mx-1">›</span>
+            <span className="text-gray-400 truncate">{title}</span>
+          </nav>
+
+          <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
               <h2 className="text-white font-semibold text-base truncate">{title}</h2>
-              <p className="text-gray-500 text-xs mt-0.5 capitalize">{source}</p>
+
+              {/* Descripción autogenerada */}
+              <p className="text-gray-500 text-xs mt-1 leading-relaxed">
+                {description}
+              </p>
+
+              {/* Ficha técnica */}
+              <div className="flex flex-wrap gap-3 mt-3 text-xs text-gray-500">
+                <span>📐 {width}×{height}</span>
+                {aspectRatio && <span>⬜ {aspectRatio}</span>}
+                <span>🖼 {format}</span>
+                <span>✨ {resolution_label}</span>
+              </div>
 
               {/* Tags */}
               {tags.length > 0 && (
@@ -79,9 +115,8 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch }) {
                className="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl
                           bg-brand-400 text-black text-sm font-semibold
                           hover:bg-brand-500 transition-all hover:scale-105">
-              ↓ Descargar
+              ↓ Download
             </a>
-
           </div>
         </div>
       </div>
