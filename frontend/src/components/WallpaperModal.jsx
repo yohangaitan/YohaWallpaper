@@ -22,7 +22,11 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch, onWall
 
   // Cuando el padre abre un wallpaper nuevo, reseteamos todo
   useEffect(() => {
-    if (!wallpaper) return
+    if (!wallpaper) {
+      setCurrent(null)
+      setHistory([])
+      return
+    }
     setCurrent(wallpaper)
     setHistory([])
   }, [wallpaper])
