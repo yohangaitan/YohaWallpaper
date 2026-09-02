@@ -28,7 +28,7 @@ export default function WallpaperCard({ wallpaper, onClick, index = 0 }) {
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent
                       opacity-0 group-hover:opacity-100 transition-opacity duration-300
                       flex flex-col justify-end p-3">
-        <p className="text-white text-sm font-medium truncate">{title}</p>
+        <p className="notranslate text-white text-sm font-medium truncate">{title}</p>
         
       </div>
     </div>
