@@ -131,10 +131,10 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch, onWall
               <span className="mx-1">›</span>
               <span className="capitalize">{source}</span>
               <span className="mx-1">›</span>
-              <span className="notranslate text-gray-400">{title}</span>
+              <span className="text-gray-400">{title}</span>
             </nav>
 
-            <h2 className="notranslate text-white font-semibold text-base mb-1">{title}</h2>
+            <h2 className="text-white font-semibold text-base mb-1">{title}</h2>
 
             <p className="text-gray-500 text-xs leading-relaxed mb-3">
               {description}
@@ -153,7 +153,7 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch, onWall
                   <button
                     key={tag}
                     onClick={() => { onTagSearch?.(tag); onClose() }}
-                    className="notranslate px-2 py-0.5 bg-white/5 hover:bg-brand-400/20
+                    className="px-2 py-0.5 bg-white/5 hover:bg-brand-400/20
                                text-gray-400 hover:text-brand-400 text-xs rounded
                                border border-white/10 hover:border-brand-400/30
                                transition-all cursor-pointer">
