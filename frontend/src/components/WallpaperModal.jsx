@@ -32,7 +32,7 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch, onWall
     if (!current?.category_id) return
     axios.get(`${import.meta.env.VITE_API_URL}/api/v1/wallpapers`, {
       params: { category_id: current.category_id, per_page: 7, sort: 'popular', page: Math.floor(Math.random() * 10) + 1 }
-    }).then(r => setRelated(r.data.items.filter(w => w.id !== current.id)))
+    }).then(r => setRelated(r.data.items))
   }, [current?.id])
 
   // Escape key y scroll lock
@@ -62,6 +62,7 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch, onWall
 
   // Volver al wallpaper anterior
   const handleBack = () => {
+    if (history.length === 0) { onClose(); return }
     const prev = history[history.length - 1]
     setHistory(h => h.slice(0, -1))
     setCurrent(prev)
@@ -157,7 +158,7 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch, onWall
               <div className="mt-4 pt-4 border-t border-white/5">
                 <p className="text-gray-500 text-xs mb-2">Related wallpapers</p>
                 <div className="grid grid-cols-3 gap-2">
-                  {related.slice(0, 6).map(w => (
+                  {related.filter(w => w.id !== current.id).slice(0, 6).map(w => (
                     <img
                       key={w.id}
                       src={w.url_preview}
