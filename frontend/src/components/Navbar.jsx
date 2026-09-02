@@ -52,7 +52,7 @@ export default function Navbar({ onSearch, onSort, activeSort, searchQuery: exte
               type="text"
               value={query}
               onChange={e => setQuery(e.target.value)}
-              placeholder="Search by name, character or #tag..."  {/* Cambiado */}
+              placeholder="Search by name, character or #tag..."
               className="w-full pl-4 pr-8 py-2 rounded-lg bg-surface-700 border border-surface-600
                          text-white placeholder-gray-500 text-sm
                          focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent
@@ -69,9 +69,9 @@ export default function Navbar({ onSearch, onSort, activeSort, searchQuery: exte
           {/* Sort buttons — desktop only */}
           <nav className="hidden sm:flex gap-1 flex-shrink-0">
             {[
-              { label: 'All',      value: 'default'  },  {/* Cambiado */}
-              { label: 'Popular',  value: 'popular'  },  {/* Cambiado */}
-              { label: 'Trending', value: 'trending' },  {/* Cambiado */}
+              { label: 'All',      value: 'default'  },
+              { label: 'Popular',  value: 'popular'  },  
+              { label: 'Trending', value: 'trending' },  
             ].map(({ label, value }) => (
               <button
                 key={value}
@@ -97,9 +97,9 @@ export default function Navbar({ onSearch, onSort, activeSort, searchQuery: exte
         {/* Row 2: All / Popular / Trending — mobile only */}
         <div className="flex sm:hidden gap-1 pb-2">
           {[
-            { label: 'All',      value: 'default'  },  {/* Cambiado */}
-            { label: 'Popular',  value: 'popular'  },  {/* Cambiado */}
-            { label: 'Trending', value: 'trending' },  {/* Cambiado */}
+            { label: 'All',      value: 'default'  },
+            { label: 'Popular',  value: 'popular'  }, 
+            { label: 'Trending', value: 'trending' },  
           ].map(({ label, value }) => (
             <button
               key={value}
