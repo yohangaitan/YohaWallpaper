@@ -39,14 +39,23 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch, onWall
     }).then(r => setRelated(r.data.items))
   }, [current?.id])
 
-  // Escape key y scroll lock
+  // Escape key, scroll lock y History API (botón atrás del navegador cierra el modal)
   useEffect(() => {
     if (!current) return
-    const handler = (e) => { if (e.key === 'Escape') onClose() }
-    document.addEventListener('keydown', handler)
+
+    // Empuja un estado falso al historial para interceptar el botón atrás
+    window.history.pushState({ modal: true }, '')
+
+    const handleKeydown = (e) => { if (e.key === 'Escape') onClose() }
+    const handlePopstate = () => { onClose() }
+
+    document.addEventListener('keydown', handleKeydown)
+    window.addEventListener('popstate', handlePopstate)
     document.body.style.overflow = 'hidden'
+
     return () => {
-      document.removeEventListener('keydown', handler)
+      document.removeEventListener('keydown', handleKeydown)
+      window.removeEventListener('popstate', handlePopstate)
       document.body.style.overflow = ''
     }
   }, [current, onClose])
@@ -101,7 +110,7 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch, onWall
               </svg>
             </button>
 
-            {/* Botón volver — solo aparece si hay historial */}
+            {/* Botón volver — solo aparece si hay historial interno */}
             {history.length > 0 && (
               <button onClick={handleBack}
                 className="absolute top-3 left-3 flex items-center gap-1 px-3 py-1.5 rounded-full
