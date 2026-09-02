@@ -42,7 +42,7 @@ export default function Navbar({ onSearch, onSort, activeSort, searchQuery: exte
         <div className="flex items-center gap-3 py-3">
           <a href="/" className="flex items-center gap-2 flex-shrink-0 group">
             <img src="/favicon.svg" alt="logo" className="w-8 h-8 group-hover:rotate-12 transition-transform duration-300" />
-            <span className="font-bold text-white text-lg tracking-tight hidden sm:block">
+            <span className="notranslate font-bold text-white text-lg tracking-tight hidden sm:block">
               Yoha<span className="text-brand-400">Wallpaper</span>
             </span>
           </a>

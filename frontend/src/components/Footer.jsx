@@ -6,7 +6,7 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <img src="/favicon.svg" alt="logo" className="w-6 h-6" />
-            <span className="text-white font-semibold">
+            <span className="notranslate text-white font-semibold">
               Yoha<span className="text-brand-400">Wallpaper</span>
             </span>
           </div>
