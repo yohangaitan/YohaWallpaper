@@ -129,7 +129,7 @@ async def list_wallpapers(
 async def get_wallpaper(request: Request, wallpaper_id: int, session: SessionDep):
     w = session.get(Wallpaper, wallpaper_id)
     if not w or w.status != WallpaperStatus.ACTIVE:
-        raise HTTPException(status_code=404, detail="Wallpaper no encontrado.")
+        raise HTTPException(status_code=404, detail="Wallpaper not found.")
     w.view_count += 1
     session.add(w)
     session.commit()
@@ -154,16 +154,16 @@ async def ingest_wallpapers(
         try:
             if source == Source.WALLHAVEN:
                 if not settings_d.wallhaven_api_key:
-                    raise HTTPException(400, "WALLHAVEN_API_KEY no configurada.")
+                    raise HTTPException(400, "WALLHAVEN_API_KEY not configured.")
                 with WallhavenClient(settings_d.wallhaven_api_key) as client:
                     items: list[WallpaperIngest] = client.search(query=query, page=page)
             elif source == Source.PEXELS:
                 if not settings_d.pexels_api_key:
-                    raise HTTPException(400, "PEXELS_API_KEY no configurada.")
+                    raise HTTPException(400, "PEXELS_API_KEY not configured.")
                 with PexelsVideoClient(settings_d.pexels_api_key) as client:
                     items = client.search(query=query, page=page)
             else:
-                raise HTTPException(400, f"Fuente '{source}' no soportada.")
+                raise HTTPException(400, f"Source '{source}' not supported.")
         except HTTPException:
             raise
         except Exception as exc:
@@ -204,7 +204,7 @@ async def download_wallpaper(request: Request, wallpaper_id: int, session: Sessi
     """
     w = session.get(Wallpaper, wallpaper_id)
     if not w or w.status != WallpaperStatus.ACTIVE:
-        raise HTTPException(status_code=404, detail="Wallpaper no encontrado.")
+        raise HTTPException(status_code=404, detail="Wallpaper not found.")
 
     # Incrementar contador de descargas
     w.download_count += 1

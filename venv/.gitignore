@@ -1,0 +1,25 @@
+# Python / venv
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Secrets
+.env
+
+# Base de datos
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
+nohup.out
+
+# Node
+node_modules/
+dist/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -16,10 +16,28 @@ function getAspectRatio(width, height) {
 }
 
 export default function WallpaperModal({ wallpaper, onClose, onTagSearch, onWallpaperSelect }) {
+  const [history, setHistory] = useState([])
+  const [current, setCurrent] = useState(null)
   const [related, setRelated] = useState([])
 
+  // Cuando el padre abre un wallpaper nuevo, reseteamos todo
   useEffect(() => {
     if (!wallpaper) return
+    setCurrent(wallpaper)
+    setHistory([])
+  }, [wallpaper])
+
+  // Fetch relacionados según el wallpaper actual
+  useEffect(() => {
+    if (!current?.category_id) return
+    axios.get(`${import.meta.env.VITE_API_URL}/api/v1/wallpapers`, {
+      params: { category_id: current.category_id, per_page: 7, sort: 'popular' }
+    }).then(r => setRelated(r.data.items.filter(w => w.id !== current.id)))
+  }, [current?.id])
+
+  // Escape key y scroll lock
+  useEffect(() => {
+    if (!current) return
     const handler = (e) => { if (e.key === 'Escape') onClose() }
     document.addEventListener('keydown', handler)
     document.body.style.overflow = 'hidden'
@@ -27,21 +45,27 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch, onWall
       document.removeEventListener('keydown', handler)
       document.body.style.overflow = ''
     }
-  }, [wallpaper, onClose])
+  }, [current, onClose])
 
-  useEffect(() => {
-    if (!wallpaper?.category_id) return
-    axios.get(`${import.meta.env.VITE_API_URL}/api/v1/wallpapers`, {
-      params: { category_id: wallpaper.category_id, per_page: 7, sort: 'popular' }
-    }).then(r => setRelated(r.data.items.filter(w => w.id !== wallpaper.id)))
-  }, [wallpaper?.category_id])
+  if (!current) return null
 
-  if (!wallpaper) return null
-
-  const { id, title, file_format, resolution_label, tags, source, width, height, url_full } = wallpaper
+  const { id, title, file_format, resolution_label, tags, source, width, height, url_full } = current
   const description = generateDescription(title, tags, width, height, resolution_label)
   const aspectRatio = width && height ? getAspectRatio(width, height) : null
   const format = file_format ? file_format.toUpperCase() : 'JPG'
+
+  // Navegar a un relacionado: apila el actual en historial
+  const handleRelatedClick = (w) => {
+    setHistory(prev => [...prev, current])
+    setCurrent(w)
+  }
+
+  // Volver al wallpaper anterior
+  const handleBack = () => {
+    const prev = history[history.length - 1]
+    setHistory(h => h.slice(0, -1))
+    setCurrent(prev)
+  }
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/95 backdrop-blur-md"
@@ -58,12 +82,25 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch, onWall
               referrerPolicy="no-referrer"
               className="w-full object-contain max-h-[65vh] mx-auto block"
             />
+
+            {/* Botón cerrar */}
             <button onClick={onClose}
               className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/70
                          text-gray-400 hover:text-white hover:bg-black
                          transition-all flex items-center justify-center text-sm font-bold">
               X
             </button>
+
+            {/* Botón volver — solo aparece si hay historial */}
+            {history.length > 0 && (
+              <button onClick={handleBack}
+                className="absolute top-3 left-3 flex items-center gap-1 px-3 py-1.5 rounded-full
+                           bg-black/70 text-gray-300 hover:text-white hover:bg-black
+                           transition-all text-xs font-medium">
+                ← Back
+              </button>
+            )}
+
             <span className="absolute bottom-3 left-3 px-2 py-0.5 rounded
                              bg-black/70 backdrop-blur-sm text-gray-300 text-xs font-mono">
               {width}x{height} · {resolution_label}
@@ -127,7 +164,7 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch, onWall
                       alt={w.title}
                       referrerPolicy="no-referrer"
                       className="w-full h-20 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={() => onWallpaperSelect?.(w)}
+                      onClick={() => handleRelatedClick(w)}
                     />
                   ))}
                 </div>

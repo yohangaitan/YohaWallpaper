@@ -85,7 +85,7 @@ export default function CategoryBar({ activeCategory, onSelect }) {
               className="flex-shrink-0 z-10 w-7 h-7 flex items-center justify-center
                          rounded-full bg-surface-700 hover:bg-surface-600
                          text-gray-400 hover:text-white transition-all mr-1"
-              aria-label="Scroll izquierda"
+              aria-label="Scroll left"
             >
               ‹
             </button>
@@ -106,7 +106,7 @@ export default function CategoryBar({ activeCategory, onSelect }) {
               className={`${btnBase} ${activeCategory === null ? btnActive : btnIdle}`}
             >
               <Image size={14} />
-              <span>Todos</span>
+              <span>All</span>
             </button>
 
             {categories.map(cat => {
@@ -135,7 +135,7 @@ export default function CategoryBar({ activeCategory, onSelect }) {
               className="flex-shrink-0 z-10 w-7 h-7 flex items-center justify-center
                          rounded-full bg-surface-700 hover:bg-surface-600
                          text-gray-400 hover:text-white transition-all ml-1"
-              aria-label="Scroll derecha"
+              aria-label="Scroll right"
             >
               ›
             </button>

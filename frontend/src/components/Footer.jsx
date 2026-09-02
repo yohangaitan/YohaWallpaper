@@ -11,7 +11,7 @@ export default function Footer() {
             </span>
           </div>
           <p className="text-gray-600 text-sm">
-            © {year} YohaWallpaper · Imágenes cortesía de{' '}
+            © {year} YohaWallpaper · Images courtesy of{' '}  {/* Cambiado */}
             <a href="https://wallhaven.cc" target="_blank" rel="noopener"
                className="text-brand-400 hover:underline">Wallhaven</a>
           </p>

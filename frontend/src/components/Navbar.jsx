@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react'
 export default function Navbar({ onSearch, onSort, activeSort, searchQuery: externalQuery }) {
   const [query, setQuery] = useState('')
   const [lang, setLang] = useState(() => {
-    return document.cookie.includes('googtrans=/es/en') ? 'en' : 'es'
+    // Cambiado: cookie ahora es /en/es (site en inglés → traducir a español)
+    return document.cookie.includes('googtrans=/en/es') ? 'es' : 'en'
   })
 
   useEffect(() => {
@@ -20,24 +21,24 @@ export default function Navbar({ onSearch, onSort, activeSort, searchQuery: exte
     onSearch?.('')
   }
 
-const toggleLang = () => {
-  const next = lang === 'es' ? 'en' : 'es'
-  if (next === 'en') {
-    document.cookie = 'googtrans=/es/en; path=/'
-  } else {
-    // Borrar la cookie para volver al idioma original
-    document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
-    document.cookie = 'googtrans=; path=/; domain=' + window.location.hostname + '; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+  const toggleLang = () => {
+    const next = lang === 'en' ? 'es' : 'en'
+    if (next === 'es') {
+      // Cambiado: de inglés a español
+      document.cookie = 'googtrans=/en/es; path=/'
+    } else {
+      document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+      document.cookie = 'googtrans=; path=/; domain=' + window.location.hostname + '; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+    }
+    setLang(next)
+    window.location.reload()
   }
-  setLang(next)
-  window.location.reload()
-}
 
-    return (
+  return (
     <header className="sticky top-0 z-50 bg-surface-900/90 backdrop-blur-md border-b border-surface-700">
       <div className="max-w-7xl mx-auto px-4">
 
-        {/* Fila 1: Logo + Búsqueda + Idioma */}
+        {/* Row 1: Logo + Search + Language */}
         <div className="flex items-center gap-3 py-3">
           <a href="/" className="flex items-center gap-2 flex-shrink-0 group">
             <img src="/favicon.svg" alt="logo" className="w-8 h-8 group-hover:rotate-12 transition-transform duration-300" />
@@ -51,7 +52,7 @@ const toggleLang = () => {
               type="text"
               value={query}
               onChange={e => setQuery(e.target.value)}
-              placeholder="Buscar por nombre, personaje o #tag..."
+              placeholder="Search by name, character or #tag..."  {/* Cambiado */}
               className="w-full pl-4 pr-8 py-2 rounded-lg bg-surface-700 border border-surface-600
                          text-white placeholder-gray-500 text-sm
                          focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent
@@ -65,12 +66,12 @@ const toggleLang = () => {
             )}
           </form>
 
-          {/* Botones sort — solo desktop */}
+          {/* Sort buttons — desktop only */}
           <nav className="hidden sm:flex gap-1 flex-shrink-0">
             {[
-              { label: 'Todos',     value: 'default'  },
-              { label: 'Populares', value: 'popular'  },
-              { label: 'Tendencia', value: 'trending' },
+              { label: 'All',      value: 'default'  },  {/* Cambiado */}
+              { label: 'Popular',  value: 'popular'  },  {/* Cambiado */}
+              { label: 'Trending', value: 'trending' },  {/* Cambiado */}
             ].map(({ label, value }) => (
               <button
                 key={value}
@@ -88,16 +89,17 @@ const toggleLang = () => {
             onClick={toggleLang}
             className="flex-shrink-0 px-3 py-1.5 rounded-lg text-sm font-medium
                        text-gray-400 hover:text-white hover:bg-surface-700 transition-all">
-            {lang === 'es' ? '🌐 EN' : '🌐 ES'}
+            {/* Cambiado: en inglés muestra ES (para cambiar a español) y viceversa */}
+            {lang === 'en' ? '🌐 ES' : '🌐 EN'}
           </button>
         </div>
 
-        {/* Fila 2: Todos / Populares / Tendencia */}
+        {/* Row 2: All / Popular / Trending — mobile only */}
         <div className="flex sm:hidden gap-1 pb-2">
           {[
-            { label: 'Todos',     value: 'default'  },
-            { label: 'Populares', value: 'popular'  },
-            { label: 'Tendencia', value: 'trending' },
+            { label: 'All',      value: 'default'  },  {/* Cambiado */}
+            { label: 'Popular',  value: 'popular'  },  {/* Cambiado */}
+            { label: 'Trending', value: 'trending' },  {/* Cambiado */}
           ].map(({ label, value }) => (
             <button
               key={value}

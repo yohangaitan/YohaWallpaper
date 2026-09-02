@@ -14,19 +14,20 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
   const [error, setError]           = useState(null)
   const [selected, setSelected]     = useState(null)
 
+  // Cambiado: SEO en inglés
   const seoTitle = searchQuery
-    ? `"${searchQuery}" wallpapers`
+    ? `"${searchQuery}" Wallpapers`
     : categoryName
-      ? `Wallpapers de ${categoryName}`
-      : sort === 'popular'  ? 'Wallpapers Populares HD y 4K'
-      : sort === 'trending' ? 'Wallpapers en Tendencia HD y 4K'
-      : 'Wallpapers HD y 4K gratis'
+      ? `${categoryName} Wallpapers HD & 4K`
+      : sort === 'popular'  ? 'Popular HD & 4K Wallpapers'
+      : sort === 'trending' ? 'Trending HD & 4K Wallpapers'
+      : 'Free HD & 4K Wallpapers'
 
   const seoDesc = searchQuery
-    ? `Wallpapers de "${searchQuery}" en alta resolución. Descarga gratis en HD y 4K.`
+    ? `Download "${searchQuery}" wallpapers in high resolution. Free HD and 4K downloads.`
     : categoryName
-      ? `Los mejores wallpapers de ${categoryName} en HD y 4K. Descarga gratis.`
-      : 'Descarga wallpapers estáticos y animados en HD y 4K. Anime, Gaming, Cyberpunk, Naturaleza y más.'
+      ? `The best ${categoryName} wallpapers in HD and 4K. Free download.`
+      : 'Download static wallpapers in HD and 4K. Anime, Gaming, Cyberpunk, Nature and more.'
 
   useSEO({ title: seoTitle, description: seoDesc })
 
@@ -39,7 +40,9 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
       if (categoryId)  params.category_id = categoryId
       const data = await fetchWallpapers(params)
       setWallpapers(data.items); setPagination(data)
-    } catch { setError('No se pudo conectar con el backend.') }
+    } catch {
+      setError('Could not connect to the server.')  // Cambiado
+    }
     finally { setLoading(false) }
   }, [page, sort, searchQuery, categoryId, perPage])
 
@@ -50,9 +53,10 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
 
   useEffect(() => { load() }, [load])
 
+  // Cambiado: headings en inglés
   const heading = searchQuery
-    ? `Resultados: "${searchQuery}"`
-    : categoryName || (sort === 'popular' ? 'Populares' : sort === 'trending' ? 'Tendencia' : 'Todos')
+    ? `Results: "${searchQuery}"`
+    : categoryName || (sort === 'popular' ? 'Popular' : sort === 'trending' ? 'Trending' : 'All')
 
   return (
     <>
@@ -86,18 +90,19 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
                    style={{ animationDelay: `${i * 30}ms` }} />
             ))}
           </div>
-        
+
         ) : wallpapers.length === 0 && !error ? (
           <div className="text-center py-24 animate-fade-in">
             <img src="/favicon.svg" alt="logo" className="w-12 h-12 mx-auto mb-6 opacity-30" />
-            <p className="text-white text-lg font-medium mb-2">Sin resultados</p>
-            <p className="text-gray-500 mb-8">No encontramos wallpapers para esa búsqueda.</p>
+            <p className="text-white text-lg font-medium mb-2">No results found</p>  {/* Cambiado */}
+            <p className="text-gray-500 mb-8">We couldn't find any wallpapers for that search.</p>  {/* Cambiado */}
             {searchQuery && (
               <div className="flex flex-col items-center gap-3">
-                <p className="text-gray-600 text-sm">Prueba con:</p>
+                <p className="text-gray-600 text-sm">Try searching for:</p>  {/* Cambiado */}
                 <div className="flex flex-wrap justify-center gap-2">
-                  {['anime', 'cyberpunk', 'naturaleza', 'espacio', 'fantasía',
-                    'dark', 'retro', 'gaming', 'japón', 'abstracto'].map(s => (
+                  {/* Cambiado: sugerencias en inglés */}
+                  {['anime', 'cyberpunk', 'nature', 'space', 'fantasy',
+                    'dark', 'retro', 'gaming', 'japan', 'abstract'].map(s => (
                     <button
                       key={s}
                       onClick={() => onSearch?.(s)}
