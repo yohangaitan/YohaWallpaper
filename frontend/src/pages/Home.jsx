@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import WallpaperCard  from '../components/WallpaperCard'
 import WallpaperModal from '../components/WallpaperModal'
-import { fetchWallpapers, translateToEnglish } from '../services/api'
+import { fetchWallpapers } from '../services/api'
 import useSEO from '../hooks/useSEO'
 import PaginationBar from '../components/PaginationBar'
 
@@ -14,7 +14,6 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
   const [error, setError]           = useState(null)
   const [selected, setSelected]     = useState(null)
 
-  // Cambiado: SEO en inglés
   const seoTitle = searchQuery
     ? `"${searchQuery}" Wallpapers`
     : categoryName
@@ -38,8 +37,8 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
       if (sort && sort !== 'default') params.sort = sort
       if (categoryId) params.category_id = categoryId
       if (searchQuery) {
-        const isSpanish = document.cookie.includes('googtrans=/en/es')
-        params.q = isSpanish ? await translateToEnglish(searchQuery) : searchQuery
+        params.q = searchQuery
+        if (document.cookie.includes('googtrans=/en/es')) params.lang = 'es'
       }
       const data = await fetchWallpapers(params)
       setWallpapers(data.items); setPagination(data)
@@ -56,7 +55,6 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
 
   useEffect(() => { load() }, [load])
 
-  // Cambiado: headings en inglés
   const heading = searchQuery
     ? `Results: "${searchQuery}"`
     : categoryName || (sort === 'popular' ? 'Popular' : sort === 'trending' ? 'Trending' : 'All')
@@ -97,13 +95,12 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
         ) : wallpapers.length === 0 && !error ? (
           <div className="text-center py-24 animate-fade-in">
             <img src="/favicon.svg" alt="logo" className="w-12 h-12 mx-auto mb-6 opacity-30" />
-            <p className="text-white text-lg font-medium mb-2">No results found</p>  {/* Cambiado */}
-            <p className="text-gray-500 mb-8">We couldn't find any wallpapers for that search.</p>  {/* Cambiado */}
+            <p className="text-white text-lg font-medium mb-2">No results found</p>
+            <p className="text-gray-500 mb-8">We couldn't find any wallpapers for that search.</p>
             {searchQuery && (
               <div className="flex flex-col items-center gap-3">
-                <p className="text-gray-600 text-sm">Try searching for:</p>  {/* Cambiado */}
+                <p className="text-gray-600 text-sm">Try searching for:</p>
                 <div className="flex flex-wrap justify-center gap-2">
-                  {/* Cambiado: sugerencias en inglés */}
                   {['anime', 'cyberpunk', 'nature', 'space', 'fantasy',
                     'dark', 'retro', 'gaming', 'japan', 'abstract'].map(s => (
                     <button
