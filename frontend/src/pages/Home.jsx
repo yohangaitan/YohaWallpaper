@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import WallpaperCard  from '../components/WallpaperCard'
 import WallpaperModal from '../components/WallpaperModal'
-import { fetchWallpapers } from '../services/api'
+import { fetchWallpapers, translateToEnglish } from '../services/api'
 import useSEO from '../hooks/useSEO'
 import PaginationBar from '../components/PaginationBar'
-import { fetchWallpapers, translateToEnglish } from '../services/api'
 
 export default function Home({ searchQuery, sort = 'default', categoryId, categoryName, onSearch }) {
   const [wallpapers, setWallpapers] = useState([])
