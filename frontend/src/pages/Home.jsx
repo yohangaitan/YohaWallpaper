@@ -4,6 +4,7 @@ import WallpaperModal from '../components/WallpaperModal'
 import { fetchWallpapers } from '../services/api'
 import useSEO from '../hooks/useSEO'
 import PaginationBar from '../components/PaginationBar'
+import { fetchWallpapers, translateToEnglish } from '../services/api'
 
 export default function Home({ searchQuery, sort = 'default', categoryId, categoryName, onSearch }) {
   const [wallpapers, setWallpapers] = useState([])
@@ -36,12 +37,15 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
     try {
       const params = { page, per_page: perPage }
       if (sort && sort !== 'default') params.sort = sort
-      if (searchQuery) params.q           = searchQuery
-      if (categoryId)  params.category_id = categoryId
+      if (categoryId) params.category_id = categoryId
+      if (searchQuery) {
+        const isSpanish = document.cookie.includes('googtrans=/en/es')
+        params.q = isSpanish ? await translateToEnglish(searchQuery) : searchQuery
+      }
       const data = await fetchWallpapers(params)
       setWallpapers(data.items); setPagination(data)
     } catch {
-      setError('Could not connect to the server.')  // Cambiado
+      setError('Could not connect to the server.')
     }
     finally { setLoading(false) }
   }, [page, sort, searchQuery, categoryId, perPage])

@@ -9,3 +9,15 @@ export const fetchWallpaper = (id) =>
   api.get(`/wallpapers/${id}`).then(r => r.data)
 
 export default api
+
+export async function translateToEnglish(text) {
+  try {
+    const res = await fetch(
+      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=es|en`
+    )
+    const data = await res.json()
+    return data.responseData.translatedText || text
+  } catch {
+    return text
+  }
+}
