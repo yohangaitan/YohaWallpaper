@@ -31,7 +31,7 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch, onWall
   useEffect(() => {
     if (!current?.category_id) return
     axios.get(`${import.meta.env.VITE_API_URL}/api/v1/wallpapers`, {
-      params: { category_id: current.category_id, per_page: 7, sort: 'popular' }
+      params: { category_id: current.category_id, per_page: 7, sort: 'popular', page: Math.floor(Math.random() * 10) + 1 }
     }).then(r => setRelated(r.data.items.filter(w => w.id !== current.id)))
   }, [current?.id])
 
