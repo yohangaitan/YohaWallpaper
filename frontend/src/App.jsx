@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Navbar      from './components/Navbar'
 import CategoryBar from './components/CategoryBar'
+import FilterBar   from './components/FilterBar'
 import Footer      from './components/Footer'
 import Home        from './pages/Home'
 
@@ -21,6 +22,14 @@ export default function App() {
     setCategory(null)
   }
 
+  const handleMobileToggle = () => setMobileOnly(v => !v)
+
+  // Clear filters limpia ambos
+  const handleClearFilters = () => {
+    setMobileOnly(false)
+    setResolution(null)
+  }
+
   return (
     <div className="min-h-screen bg-surface-900 font-sans flex flex-col">
       <Navbar
@@ -32,10 +41,13 @@ export default function App() {
       <CategoryBar
         activeCategory={category}
         onSelect={setCategory}
+      />
+      <FilterBar
+        mobileOnly={mobileOnly}
+        onMobileToggle={handleMobileToggle}
         resolution={resolution}
         onResolutionChange={setResolution}
-        mobileOnly={mobileOnly}
-        onMobileToggle={() => setMobileOnly(v => !v)}
+        onClearFilters={handleClearFilters}
       />
       <div className="flex-1">
         <Home
