@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import Navbar      from './components/Navbar'
 import CategoryBar from './components/CategoryBar'
@@ -9,10 +8,12 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('')
   const [sort,        setSort]        = useState('default')
   const [category,    setCategory]    = useState(null)
+  const [resolution,  setResolution]  = useState(null)
+  const [mobileOnly,  setMobileOnly]  = useState(false)
 
   const handleSearch = (q) => {
     setSearchQuery(q)
-    if (q) setCategory(null)  // Limpiar categoría al buscar
+    if (q) setCategory(null)
   }
 
   const handleSort = (value) => {
@@ -28,13 +29,22 @@ export default function App() {
         activeSort={sort}
         searchQuery={searchQuery}
       />
-      <CategoryBar activeCategory={category} onSelect={setCategory} />
+      <CategoryBar
+        activeCategory={category}
+        onSelect={setCategory}
+        resolution={resolution}
+        onResolutionChange={setResolution}
+        mobileOnly={mobileOnly}
+        onMobileToggle={() => setMobileOnly(v => !v)}
+      />
       <div className="flex-1">
         <Home
           searchQuery={searchQuery}
           sort={sort}
           categoryId={category?.id ?? null}
           categoryName={category?.name ?? null}
+          resolution={resolution}
+          mobileOnly={mobileOnly}
           onSearch={handleSearch}
         />
       </div>

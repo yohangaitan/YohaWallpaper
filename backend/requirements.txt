@@ -9,3 +9,4 @@ python-dotenv==1.1.0
 httpx==0.28.1
 python-multipart==0.0.20
 slowapi==0.1.9
+deep-translator

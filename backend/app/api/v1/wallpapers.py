@@ -11,7 +11,6 @@ from app.models.wallpaper import Category, MediaType, Source, Wallpaper, Wallpap
 from app.schemas.wallpaper import IngestResult, PaginatedWallpapers, WallpaperIngest, WallpaperOut
 from app.services.fetcher import PexelsVideoClient, WallhavenClient
 
-# Importaciones de caché y rate limit — con fallback si no están instaladas
 try:
     from fastapi_cache.decorator import cache as _cache
     _CACHE_OK = True
@@ -32,9 +31,14 @@ except ImportError:
             return decorator
     _limiter = _FakeLimiter()
 
+try:
+    from deep_translator import GoogleTranslator
+    _TRANSLATOR_OK = True
+except ImportError:
+    _TRANSLATOR_OK = False
+
 router = APIRouter(prefix="/wallpapers", tags=["Wallpapers"])
 
-# ── Resolución → ancho mínimo en píxeles ─────────────────────────────────────
 RESOLUTION_MAP: dict[str, int] = {
     "hd":  1280,
     "fhd": 1920,
@@ -58,41 +62,48 @@ async def list_categories(request: Request, session: SessionDep):
 async def list_wallpapers(
     request:     Request,
     session:     SessionDep,
-    # Filtros básicos
     media_type:  Optional[MediaType] = Query(default=None),
     category_id: Optional[int]       = Query(default=None),
     source:      Optional[Source]    = Query(default=None),
     q:           Optional[str]       = Query(default=None, min_length=1, max_length=100),
-    # Filtros de resolución
-    resolution:  Optional[Literal["hd", "fhd", "2k", "4k"]] = Query(
-                     default=None,
-                     description="hd=1280p · fhd=1080p · 2k=1440p · 4k=2160p"),
-    min_width:   Optional[int] = Query(default=None, ge=1, description="Ancho mínimo en px"),
-    max_width:   Optional[int] = Query(default=None, ge=1, description="Ancho máximo en px"),
-    min_height:  Optional[int] = Query(default=None, ge=1, description="Alto mínimo en px"),
-    # Paginación
+    lang:        Optional[str]       = Query(default=None, max_length=5),
+    resolution:  Optional[Literal["hd", "fhd", "2k", "4k"]] = Query(default=None),
+    orientation: Optional[Literal["portrait", "landscape"]]  = Query(default=None),
+    min_width:   Optional[int] = Query(default=None, ge=1),
+    max_width:   Optional[int] = Query(default=None, ge=1),
+    min_height:  Optional[int] = Query(default=None, ge=1),
     sort:        Optional[Literal["default", "popular", "trending"]] = Query(default="default"),
     page:        int = Query(default=1,  ge=1),
     per_page:    int = Query(default=24, ge=1, le=100),
 ):
     query = select(Wallpaper).where(Wallpaper.status == WallpaperStatus.ACTIVE)
 
-    # Filtros básicos
     if media_type:  query = query.where(Wallpaper.media_type  == media_type)
     if category_id: query = query.where(Wallpaper.category_id == category_id)
     if source:      query = query.where(Wallpaper.source       == source)
+
     if q:
         q_clean = q.lstrip('#')
+        if lang == 'es' and _TRANSLATOR_OK:
+            try:
+                q_clean = GoogleTranslator(source='es', target='en').translate(q_clean)
+            except Exception:
+                pass
         query = query.where(
             col(Wallpaper.title).contains(q_clean) |
             col(Wallpaper.tags).contains(q_clean)
         )
 
-    # Resolución predefinida (tiene prioridad sobre min_width manual)
+    # Orientación (portrait = mobile, landscape = desktop)
+    if orientation == 'portrait':
+        query = query.where(Wallpaper.height > Wallpaper.width)
+    elif orientation == 'landscape':
+        query = query.where(Wallpaper.width >= Wallpaper.height)
+
+    # Resolución
     effective_min_width = min_width
     if resolution:
         effective_min_width = RESOLUTION_MAP[resolution]
-
     if effective_min_width:
         query = query.where(Wallpaper.width >= effective_min_width)
     if max_width:
@@ -100,13 +111,15 @@ async def list_wallpapers(
     if min_height:
         query = query.where(Wallpaper.height >= min_height)
 
-    total    = session.exec(select(func.count()).select_from(query.subquery())).one()
+    total = session.exec(select(func.count()).select_from(query.subquery())).one()
+
     if sort == "popular":
         order = col(Wallpaper.view_count).desc()
     elif sort == "trending":
         order = col(Wallpaper.id).desc()
     else:
         order = col(Wallpaper.download_count).desc()
+
     items_db = session.exec(
         query.order_by(order)
              .offset((page - 1) * per_page)
@@ -122,7 +135,7 @@ async def list_wallpapers(
     )
 
 
-# ── Detalle de wallpaper ──────────────────────────────────────────────────────
+# ── Detalle ───────────────────────────────────────────────────────────────────
 @router.get("/{wallpaper_id}", response_model=WallpaperOut)
 @_cache(expire=settings.cache_ttl_detail)
 @_limiter.limit("120/minute")
@@ -131,13 +144,11 @@ async def get_wallpaper(request: Request, wallpaper_id: int, session: SessionDep
     if not w or w.status != WallpaperStatus.ACTIVE:
         raise HTTPException(status_code=404, detail="Wallpaper not found.")
     w.view_count += 1
-    session.add(w)
-    session.commit()
-    session.refresh(w)
+    session.add(w); session.commit(); session.refresh(w)
     return WallpaperOut(**{**w.model_dump(), 'tags': json.loads(w.tags) if isinstance(w.tags, str) else w.tags}, resolution_label=w.resolution_label)
 
 
-# ── Ingesta manual (protegida con rate limit estricto) ────────────────────────
+# ── Ingesta ───────────────────────────────────────────────────────────────────
 @router.post("/ingest", response_model=IngestResult, status_code=status.HTTP_201_CREATED)
 @_limiter.limit("5/minute")
 async def ingest_wallpapers(
@@ -167,66 +178,43 @@ async def ingest_wallpapers(
         except HTTPException:
             raise
         except Exception as exc:
-            result.errors += 1
-            result.message = str(exc)
-            break
+            result.errors += 1; result.message = str(exc); break
 
         for item in items:
             wp = Wallpaper(**item.model_dump())
             wp.category_id = category_id
             session.add(wp)
             try:
-                session.commit()
-                result.inserted += 1
+                session.commit(); result.inserted += 1
             except IntegrityError:
-                session.rollback()
-                result.skipped += 1
+                session.rollback(); result.skipped += 1
 
-    result.message = (
-        f"{result.inserted} insertados, "
-        f"{result.skipped} duplicados, "
-        f"{result.errors} errores."
-    )
+    result.message = f"{result.inserted} insertados, {result.skipped} duplicados, {result.errors} errores."
     return result
 
 
-# (después del endpoint /ingest)
+# ── Descarga ──────────────────────────────────────────────────────────────────
 import httpx
 from fastapi.responses import StreamingResponse
 
 @router.get("/{wallpaper_id}/download")
 @_limiter.limit("30/minute")
 async def download_wallpaper(request: Request, wallpaper_id: int, session: SessionDep):
-    """
-    Proxy de descarga: obtiene la imagen de Wallhaven y la sirve
-    con Content-Disposition: attachment para forzar descarga real.
-    También incrementa download_count.
-    """
     w = session.get(Wallpaper, wallpaper_id)
     if not w or w.status != WallpaperStatus.ACTIVE:
         raise HTTPException(status_code=404, detail="Wallpaper not found.")
-
-    # Incrementar contador de descargas
     w.download_count += 1
-    session.add(w)
-    session.commit()
+    session.add(w); session.commit()
 
     safe_title = "".join(c if c.isalnum() or c in "._- " else "_" for c in (w.title or "wallpaper"))
     filename   = f"{safe_title}.{w.file_format.value}"
-
-    # Determinar content-type
-    ct_map = {
-        "jpg": "image/jpeg", "jpeg": "image/jpeg",
-        "png": "image/png",
-        "mp4": "video/mp4", "webm": "video/webm",
-    }
+    ct_map = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png", "mp4": "video/mp4", "webm": "video/webm"}
     content_type = ct_map.get(w.file_format.value, "application/octet-stream")
 
     async def stream_from_source():
         async with httpx.AsyncClient(
             headers={"Referer": "https://wallhaven.cc/"},
-            timeout=60,
-            follow_redirects=True,
+            timeout=60, follow_redirects=True,
         ) as client:
             async with client.stream("GET", w.url_full) as resp:
                 resp.raise_for_status()
@@ -234,10 +222,6 @@ async def download_wallpaper(request: Request, wallpaper_id: int, session: Sessi
                     yield chunk
 
     return StreamingResponse(
-        stream_from_source(),
-        media_type=content_type,
-        headers={
-            "Content-Disposition": f'attachment; filename="{filename}"',
-            "Cache-Control": "no-store",
-        },
+        stream_from_source(), media_type=content_type,
+        headers={"Content-Disposition": f'attachment; filename="{filename}"', "Cache-Control": "no-store"},
     )
