@@ -8,7 +8,7 @@ A modern wallpaper platform with 121,000+ high-quality wallpapers. Built with Fa
 
 ## ✨ Features
 
-- 121,000+ wallpapers in HD, 2K, and 4K
+- Wallpapers in HD, 2K, and 4K
 - Search by name, character, or `#tag`
 - Filter by category: Anime, Gaming, Cyberpunk, Nature, Space, and more
 - Sort by Latest, Popular, or Trending
