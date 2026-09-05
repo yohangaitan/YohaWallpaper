@@ -321,8 +321,9 @@ function ImportTab({ token }) {
     axios.get(`${API}/api/v1/wallpapers/categories`).then(r => setCategories(r.data))
   }, [])
 
+
   const search = async (p = 1) => {
-    if (!query.trim()) return
+    // allow empty query
     setLoading(true); setResults([]); setSelected(new Set())
     try {
       const r = await axios.get(`${API}/api/v1/admin/wallhaven/search`,
@@ -332,7 +333,9 @@ function ImportTab({ token }) {
       setPage(p)
     } catch { alert('Search failed.') }
     finally { setLoading(false) }
+
   }
+  useEffect(() => { search(1) }, [])
 
   const toggleSelect = (id) => {
     setSelected(prev => {
