@@ -7,14 +7,14 @@ export default function WallpaperCard({ wallpaper, onClick, index = 0 }) {
       onClick={() => onClick?.(wallpaper)}
       className="group relative overflow-hidden rounded-xl bg-surface-800 cursor-pointer
                  ring-1 ring-surface-700 hover:ring-surface-600 transition-all duration-300
-                 hover:scale-[1.02] hover:shadow-2xl hover:shadow-brand-400/10
-                 animate-slide-up mb-3"
+                 hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-400/10
+                 animate-slide-up"
       style={{ animationDelay: `${Math.min(index * 40, 400)}ms`, animationFillMode: 'both' }}
     >
       <img
         src={url_preview}
         alt={title}
-        width={width} height={height} className="w-full h-auto block transition-transform duration-500 group-hover:scale-105"
+        className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
         loading="lazy"
       />
 

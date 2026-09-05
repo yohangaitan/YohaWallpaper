@@ -1,17 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
-import Masonry from 'react-masonry-css'
 import WallpaperCard  from '../components/WallpaperCard'
 import WallpaperModal from '../components/WallpaperModal'
 import { fetchWallpapers } from '../services/api'
 import useSEO from '../hooks/useSEO'
 import PaginationBar from '../components/PaginationBar'
-
-const MASONRY_BREAKPOINTS = {
-  default: 5,
-  1280: 4,
-  1024: 3,
-  640: 2,
-}
 
 export default function Home({ searchQuery, sort = 'default', categoryId, categoryName, resolution, mobileOnly, onSearch }) {
   const [wallpapers, setWallpapers] = useState([])
@@ -95,15 +87,12 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
         )}
 
         {loading ? (
-          <Masonry
-            breakpointCols={MASONRY_BREAKPOINTS}
-            className="flex gap-3"
-            columnClassName="flex flex-col gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {Array.from({ length: perPage }).map((_, i) => (
-              <div key={i} className="rounded-xl bg-surface-800 animate-pulse"
-                   style={{ height: `${180 + (i % 3) * 60}px`, animationDelay: `${i * 30}ms` }} />
+              <div key={i} className="h-48 rounded-xl bg-surface-800 animate-pulse"
+                   style={{ animationDelay: `${i * 30}ms` }} />
             ))}
-          </Masonry>
+          </div>
 
         ) : wallpapers.length === 0 && !error ? (
           <div className="text-center py-24 animate-fade-in">
@@ -131,14 +120,11 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
           </div>
 
         ) : (
-          <Masonry
-            breakpointCols={MASONRY_BREAKPOINTS}
-            className="flex gap-3"
-            columnClassName="flex flex-col gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {wallpapers.map((w, i) => (
               <WallpaperCard key={w.id} wallpaper={w} onClick={setSelected} index={i} />
             ))}
-          </Masonry>
+          </div>
         )}
 
         <PaginationBar
