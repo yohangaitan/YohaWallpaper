@@ -1,24 +1,19 @@
 from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
 class Settings(BaseSettings):
     app_name: str    = "YohaWallpaper API"
     app_version: str = "0.1.0"
     app_env: str     = "development"
-
     database_url: str      = "sqlite:///./yohawallpaper.db"
     wallhaven_api_key: str = ""
     pexels_api_key: str    = ""
     app_cors_origins: str  = "http://localhost:5173"
-
-    # Redis — si no está disponible, se usa caché en memoria
+    admin_token: str       = ""
     redis_url: str         = "redis://localhost:6379"
-
-    # TTL de caché en segundos
-    cache_ttl_wallpapers:  int = 300    # 5 min  — lista paginada
-    cache_ttl_categories:  int = 3600   # 1 hora — categorías (cambian poco)
-    cache_ttl_detail:      int = 600    # 10 min — detalle de wallpaper
+    cache_ttl_wallpapers:  int = 300
+    cache_ttl_categories:  int = 3600
+    cache_ttl_detail:      int = 600
 
     @property
     def cors_origins_list(self) -> list[str]:
@@ -39,10 +34,8 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
-
 
 settings = get_settings()

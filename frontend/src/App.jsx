@@ -1,11 +1,13 @@
 import { useState } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar      from './components/Navbar'
 import CategoryBar from './components/CategoryBar'
 import FilterBar   from './components/FilterBar'
 import Footer      from './components/Footer'
 import Home        from './pages/Home'
+import AdminPage   from './pages/AdminPage'
 
-export default function App() {
+function MainLayout() {
   const [searchQuery, setSearchQuery] = useState('')
   const [sort,        setSort]        = useState('default')
   const [category,    setCategory]    = useState(null)
@@ -24,7 +26,6 @@ export default function App() {
 
   const handleMobileToggle = () => setMobileOnly(v => !v)
 
-  // Clear filters limpia ambos
   const handleClearFilters = () => {
     setMobileOnly(false)
     setResolution(null)
@@ -62,5 +63,16 @@ export default function App() {
       </div>
       <Footer />
     </div>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="*" element={<MainLayout />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
