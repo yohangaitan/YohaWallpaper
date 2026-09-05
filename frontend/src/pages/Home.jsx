@@ -87,7 +87,7 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
         )}
 
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+          <div className="columns-2 sm:columns-3 lg:columns-4 xl:columns-5 gap-3">
             {Array.from({ length: perPage }).map((_, i) => (
               <div key={i} className="h-48 rounded-xl bg-surface-800 animate-pulse"
                    style={{ animationDelay: `${i * 30}ms` }} />
@@ -120,7 +120,7 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
           </div>
 
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+          <div className="columns-2 sm:columns-3 lg:columns-4 xl:columns-5 gap-3">
             {wallpapers.map((w, i) => (
               <WallpaperCard key={w.id} wallpaper={w} onClick={setSelected} index={i} />
             ))}
