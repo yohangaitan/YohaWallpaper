@@ -3,7 +3,6 @@ import { Smartphone, Monitor, ChevronDown } from 'lucide-react'
 
 const RESOLUTIONS = [
   { label: 'All resolutions', value: null  },
-  { label: 'HD (720p)',       value: 'hd'  },
   { label: 'Full HD (1080p)', value: 'fhd' },
   { label: '2K (1440p)',      value: '2k'  },
   { label: '4K (2160p)',      value: '4k'  },
