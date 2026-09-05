@@ -14,7 +14,7 @@ export default function WallpaperCard({ wallpaper, onClick, index = 0 }) {
       <img
         src={url_preview}
         alt={title}
-        className="w-full h-auto block transition-transform duration-500 group-hover:scale-105"
+        width={width} height={height} className="w-full h-auto block transition-transform duration-500 group-hover:scale-105"
         loading="lazy"
       />
 
