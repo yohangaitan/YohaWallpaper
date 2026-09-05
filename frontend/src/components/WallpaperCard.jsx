@@ -8,7 +8,7 @@ export default function WallpaperCard({ wallpaper, onClick, index = 0 }) {
       className="group relative overflow-hidden rounded-xl bg-surface-800 cursor-pointer
                  ring-1 ring-surface-700 hover:ring-surface-600 transition-all duration-300
                  hover:scale-[1.02] hover:shadow-2xl hover:shadow-brand-400/10
-                 animate-slide-up break-inside-avoid mb-3"
+                 animate-slide-up mb-3"
       style={{ animationDelay: `${Math.min(index * 40, 400)}ms`, animationFillMode: 'both' }}
     >
       <img
@@ -24,16 +24,15 @@ export default function WallpaperCard({ wallpaper, onClick, index = 0 }) {
         {resolution_label}
       </span>
 
-      {/* Badge mobile — esquina inferior izquierda */}
+      {/* Badge mobile — esquina inferior izquierda, solo icono */}
       {isMobile && (
-        <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded text-xs
-                         bg-black/60 backdrop-blur-sm text-gray-300 flex items-center gap-1">
-          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"
+        <span className="absolute bottom-2 left-2 p-1 rounded
+                         bg-black/60 backdrop-blur-sm text-gray-300">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
                fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
             <line x1="12" y1="18" x2="12.01" y2="18"/>
           </svg>
-          Mobile
         </span>
       )}
 
