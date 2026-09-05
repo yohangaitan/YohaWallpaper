@@ -10,7 +10,7 @@ const MASONRY_BREAKPOINTS = {
   default: 5,
   1280: 4,
   1024: 3,
-  640: 1,
+  640: 2,
 }
 
 export default function Home({ searchQuery, sort = 'default', categoryId, categoryName, resolution, mobileOnly, onSearch }) {
