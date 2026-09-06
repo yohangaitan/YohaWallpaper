@@ -240,6 +240,7 @@ function ImportTab({ token }) {
   const [importing, setImporting]   = useState(false)
   const [importResult, setImportResult] = useState(null)
   const [hideImported, setHideImported] = useState(true)
+  const [sorting, setSorting] = useState('random')
   const headers = { Authorization: `Bearer ${token}` }
 
   useEffect(() => {
@@ -250,7 +251,7 @@ function ImportTab({ token }) {
     setLoading(true); setResults([]); setSelected(new Set())
     try {
       const r = await axios.get(`${API}/api/v1/admin/wallhaven/search`,
-        { params: { q, page: p }, headers })
+        { params: { q, page: p, sorting }, headers })
       setResults(r.data.results); setLastPage(r.data.last_page); setPage(p)
     } catch { alert('Search failed.') }
     finally { setLoading(false) }
@@ -295,10 +296,22 @@ function ImportTab({ token }) {
           className="px-6 py-2.5 rounded-lg bg-brand-400 text-black font-semibold text-sm hover:bg-brand-500 transition-all disabled:opacity-50">
           {loading ? 'Loading...' : 'Search'}
         </button>
-        <button onClick={() => search(1, '')} disabled={loading}
-          className="px-4 py-2.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-surface-700 border border-surface-600 transition-all disabled:opacity-50">
-          🔀 Random
-        </button>
+        <div className="flex gap-1">
+          {[
+            { label: '🔀 Random', value: 'random' },
+            { label: '👁 Most Viewed', value: 'views' },
+            { label: '⬇ Most Downloaded', value: 'downloads' },
+            { label: '⭐ Top', value: 'toplist' },
+          ].map(s => (
+            <button key={s.value}
+              onClick={() => { setSorting(s.value); search(1, '') }}
+              disabled={loading}
+              className={`px-3 py-2 rounded-lg text-xs font-medium transition-all disabled:opacity-50
+                ${sorting === s.value ? 'bg-brand-400 text-black' : 'text-gray-400 hover:text-white hover:bg-surface-700 border border-surface-600'}`}>
+              {s.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {results.length > 0 && (
