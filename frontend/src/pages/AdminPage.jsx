@@ -285,7 +285,7 @@ function ImportTab({ token }) {
   }, [])
 
   const search = async (p = 1, q = query, s = sorting) => {
-    setLoading(true); setResults([]); setSelected(new Set())
+    setLoading(true); setResults([])
     try {
       const r = await axios.get(`${API}/api/v1/admin/wallhaven/search`,
         { params: { q, page: p, sorting: s }, headers })
