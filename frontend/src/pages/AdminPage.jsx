@@ -303,6 +303,7 @@ function ImportTab({ token }) {
 
   const doImport = async () => {
     if (selected.size === 0) return
+    if (!categoryId) { setImportResult({ message: '⚠ Please select a category before importing.' }); return }
     setImporting(true); setImportResult(null)
     try {
       const ids = [...selected].join(',')
