@@ -406,7 +406,7 @@ function ImportTab({ token }) {
                 className={`group relative overflow-hidden rounded-xl bg-surface-800 transition-all
                   ${isSelectable
                     ? 'cursor-pointer ring-2 ' + (selected.has(w.id) ? 'ring-brand-400' : 'ring-surface-700 hover:ring-surface-500')
-                    : 'opacity-50 cursor-not-allowed ring-2 ' + (w.already_in_db ? 'ring-yellow-500/40' : 'ring-red-500/30')}`}>
+                    : 'opacity-50 ring-2 ' + (w.already_in_db ? 'ring-yellow-500/40' : 'ring-red-500/30')}`}>
                 <img src={w.url_preview} alt={w.id} referrerPolicy="no-referrer"
                   className="w-full h-48 object-cover" loading="lazy"
                   onDoubleClick={e => { e.stopPropagation(); setPreview(w.url_full) }} />
