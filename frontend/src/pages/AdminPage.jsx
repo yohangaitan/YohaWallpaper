@@ -416,10 +416,10 @@ function ImportTab({ token }) {
                     {selected.has(w.id) && <span className="text-black text-xs font-bold">✓</span>}
                   </div>
                 )}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center pointer-events-none">
                   <button onClick={e => { e.stopPropagation(); setPreview(w.url_full) }}
                     className="opacity-0 group-hover:opacity-100 transition-all bg-white/20 hover:bg-white/30
-                               text-white text-xs font-semibold px-3 py-1.5 rounded-lg">
+                               text-white text-xs font-semibold px-3 py-1.5 rounded-lg pointer-events-auto">
                     View
                   </button>
                 </div>
