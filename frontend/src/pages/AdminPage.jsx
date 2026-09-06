@@ -286,6 +286,7 @@ function ImportTab({ token }) {
 
   const search = async (p = 1, q = query, s = sorting) => {
     setLoading(true); setResults([])
+    window.scrollTo({ top: 0, behavior: "smooth" })
     try {
       const r = await axios.get(`${API}/api/v1/admin/wallhaven/search`,
         { params: { q, page: p, sorting: s }, headers })
@@ -416,7 +417,7 @@ function ImportTab({ token }) {
                   </div>
                 )}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
-                  <button onClick={e => { e.stopPropagation(); setPreview(w.url_preview) }}
+                  <button onClick={e => { e.stopPropagation(); setPreview(w.url_full) }}
                     className="opacity-0 group-hover:opacity-100 transition-all bg-white/20 hover:bg-white/30
                                text-white text-xs font-semibold px-3 py-1.5 rounded-lg">
                     View
