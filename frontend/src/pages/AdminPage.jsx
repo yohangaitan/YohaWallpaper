@@ -409,7 +409,7 @@ function ImportTab({ token }) {
                     : 'opacity-50 ring-2 ' + (w.already_in_db ? 'ring-yellow-500/40' : 'ring-red-500/30')}`}>
                 <img src={w.url_preview} alt={w.id} referrerPolicy="no-referrer"
                   className="w-full h-48 object-cover" loading="lazy"
-                  onDoubleClick={e => { e.stopPropagation(); setPreview(w.url_full) }} />
+                  onDoubleClick={e => { e.stopPropagation(); setPreview(`https://w.wallhaven.cc/full/${w.id.slice(0,2)}/wallhaven-${w.id}.jpg`) }} />
                 {isSelectable && (
                   <div className={`absolute top-2 left-2 w-5 h-5 rounded border-2 flex items-center justify-center transition-all
                     ${selected.has(w.id) ? 'bg-brand-400 border-brand-400' : 'bg-black/50 border-white/50'}`}>
@@ -417,7 +417,7 @@ function ImportTab({ token }) {
                   </div>
                 )}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center pointer-events-none">
-                  <button onClick={e => { e.stopPropagation(); setPreview(w.url_full) }}
+                  <button onClick={e => { e.stopPropagation(); setPreview(`https://w.wallhaven.cc/full/${w.id.slice(0,2)}/wallhaven-${w.id}.jpg`) }}
                     className="opacity-0 group-hover:opacity-100 transition-all bg-white/20 hover:bg-white/30
                                text-white text-xs font-semibold px-3 py-1.5 rounded-lg pointer-events-auto">
                     View
