@@ -225,3 +225,25 @@ async def download_wallpaper(request: Request, wallpaper_id: int, session: Sessi
         stream_from_source(), media_type=content_type,
         headers={"Content-Disposition": f'attachment; filename="{filename}"', "Cache-Control": "no-store"},
     )
+
+# backend/app/api/v1/wallpapers.py — endpoint
+from fastapi import Depends, Response
+from sqlmodel import Session
+from app.database import get_session
+from fastapi.responses import Response
+
+@router.get("/sitemap.xml", include_in_schema=False)
+def sitemap(session: Session = Depends(get_session)):
+    wallpapers = session.exec(select(Wallpaper)).all()
+    
+    urls = ["https://yohawallpaper.plyos.me/"]  # homepage
+    for w in wallpapers:
+        urls.append(f"https://yohawallpaper.plyos.me/wallpaper/{w.id}")
+    
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    for url in urls:
+        xml += f"  <url><loc>{url}</loc></url>\n"
+    xml += "</urlset>"
+    
+    return Response(content=xml, media_type="application/xml")
