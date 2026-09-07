@@ -24,11 +24,6 @@
   <!-- Google Translate -->
   <div id="google_translate_element" style="display:none"></div>
   <script>
-    // Solo aplicar traducción si el usuario la activó explícitamente
-    if (document.cookie.includes('googtrans') && !sessionStorage.getItem('userChoseLang')) {
-      document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
-      document.cookie = 'googtrans=; path=/; domain=' + window.location.hostname + '; expires=Thu, 01 Jan 1970 00:00:00 GMT'
-    }
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
         pageLanguage: 'en',
