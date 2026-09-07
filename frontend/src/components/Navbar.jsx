@@ -31,7 +31,7 @@ export default function Navbar({ onSearch, onSort, activeSort, searchQuery: exte
       document.cookie = 'googtrans=; path=/; domain=' + window.location.hostname + '; expires=Thu, 01 Jan 1970 00:00:00 GMT'
     }
     setLang(next)
-    window.location.reload()
+    const sel = document.querySelector(".goog-te-combo"); if (sel) { sel.value = next === "es" ? "es" : ""; sel.dispatchEvent(new Event("change")) } else { window.location.reload() }
   }
 
   return (
