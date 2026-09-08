@@ -75,7 +75,7 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
           <h1 className="text-2xl font-bold text-white">{heading}</h1>
           {pagination && (
             <p className="text-gray-500 text-sm mt-1">
-              <span className="notranslate">{pagination.total.toLocaleString()}</span> wallpapers
+              <span className="notranslate">{pagination.total.toLocaleString()}</span>{' '}wallpapers
             </p>
           )}
         </div>

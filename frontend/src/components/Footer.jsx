@@ -27,7 +27,10 @@ export default function Footer() {
                className="text-brand-400 hover:underline">Wallhaven</a>
           </p>
           <div className="flex gap-4 text-sm text-gray-600">
-            <span>{total !== null ? `${total.toLocaleString()} wallpapers` : '— wallpapers'}</span>
+            <span>
+              <span className="notranslate">{total !== null ? total.toLocaleString() : '—'}</span>
+              {' '}wallpapers
+            </span>
             <span>·</span>
             <span>HD · 2K · 4K</span>
           </div>
