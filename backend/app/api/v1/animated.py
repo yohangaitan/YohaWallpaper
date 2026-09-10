@@ -9,7 +9,7 @@ import json
 import secrets
 from typing import Optional
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
 from sqlmodel import select
 
 from app.api.deps import SessionDep
@@ -25,11 +25,12 @@ ALLOWED_TYPES = {
     "video/mp4":  FileFormat.MP4,
     "video/webm": FileFormat.WEBM,
 }
-MAX_SIZE_BYTES = 50 * 1024 * 1024  # 50 MB
+MAX_SIZE_BYTES = 75 * 1024 * 1024  # 75 MB
 
 
 @router.post("/upload")
 async def upload_animated(
+    request:     Request,
     session:     SessionDep,
     token:       str         = Depends(verify_token),
     file:        UploadFile  = File(...),
@@ -44,6 +45,14 @@ async def upload_animated(
         raise HTTPException(
             status_code=400,
             detail=f"Unsupported format. Allowed: {list(ALLOWED_TYPES.keys())}"
+        )
+
+    # Validar tamaño por Content-Length antes de leer
+    content_length = request.headers.get("content-length")
+    if content_length and int(content_length) > MAX_SIZE_BYTES:
+        raise HTTPException(
+            status_code=413,
+            detail=f"File too large. Max size: {MAX_SIZE_BYTES // 1024 // 1024}MB"
         )
 
     # Leer y validar tamaño

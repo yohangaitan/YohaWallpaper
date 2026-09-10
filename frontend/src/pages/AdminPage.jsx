@@ -519,7 +519,7 @@ function UploadAnimatedTab({ token }) {
       {/* Upload area */}
       <div className="bg-surface-800 border border-surface-700 rounded-2xl p-5">
         <h2 className="text-white font-semibold mb-1">Upload Animated Wallpaper</h2>
-        <p className="text-gray-500 text-sm mb-4">MP4 or WebM · Max 50MB</p>
+        <p className="text-gray-500 text-sm mb-4">MP4 or WebM · Max 75MB</p>
 
         {/* File picker */}
         <label className={`flex flex-col items-center justify-center w-full h-40 rounded-xl border-2 border-dashed
