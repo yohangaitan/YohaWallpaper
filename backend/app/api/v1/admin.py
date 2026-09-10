@@ -49,6 +49,30 @@ async def delete_bulk(
     session.commit()
     return {"status": "deleted", "count": count}
 
+# ── Edit wallpaper ────────────────────────────────────────────────────────────
+@router.patch("/wallpapers/{wallpaper_id}")
+async def update_wallpaper(
+    wallpaper_id: int,
+    session:      SessionDep,
+    token:        str = Depends(verify_token),
+    title:        Optional[str] = Query(default=None),
+    category_id:  Optional[int] = Query(default=None),
+    tags:         Optional[str] = Query(default=None),
+):
+    w = session.get(Wallpaper, wallpaper_id)
+    if not w:
+        raise HTTPException(status_code=404, detail="Wallpaper not found.")
+    if title is not None:
+        w.title = title.strip()
+    if category_id is not None:
+        w.category_id = category_id
+    if tags is not None:
+        tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+        w.tags = json.dumps(tag_list)
+    session.add(w)
+    session.commit()
+    return {"status": "updated", "id": wallpaper_id}
+
 # ── Delete all (con opción except) ───────────────────────────────────────────
 @router.delete("/wallpapers")
 async def delete_all(
@@ -77,6 +101,16 @@ async def delete_wallpaper(
     w = session.get(Wallpaper, wallpaper_id)
     if not w:
         raise HTTPException(status_code=404, detail="Wallpaper not found.")
+
+    # Limpiar R2 si es animated manual
+    if w.media_type == MediaType.ANIMATED and w.source == Source.MANUAL:
+        key = "/".join(w.url_full.split("/")[-2:])
+        try:
+            from app.services.r2 import delete_video
+            delete_video(key)
+        except Exception:
+            pass
+
     session.delete(w)
     session.commit()
     return {"status": "deleted", "id": wallpaper_id}

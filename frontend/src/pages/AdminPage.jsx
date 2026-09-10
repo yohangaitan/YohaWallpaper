@@ -96,11 +96,21 @@ export default function AdminPage() {
       {tab === 'manage' ? <ManageTab token={token} />
       : tab === 'import' ? <ImportTab token={token} />
       : <UploadAnimatedTab token={token} />}
+      {editTarget && (
+        <EditModal
+          wallpaper={editTarget}
+          categories={categories}
+          token={token}
+          onClose={() => setEditTarget(null)}
+          onSaved={() => { setEditTarget(null); load() }}
+        />
+      )}
     </div>
   )
 }
 
 function ManageTab({ token }) {
+  const [editTarget, setEditTarget] = useState(null)
   const [wallpapers, setWallpapers]       = useState([])
   const [page, setPage]                   = useState(1)
   const [totalPages, setTotalPages]       = useState(1)
@@ -200,10 +210,15 @@ function ManageTab({ token }) {
             <div key={w.id} onClick={() => toggleSelect(w.id)}
               className={`group relative overflow-hidden rounded-xl bg-surface-800 cursor-pointer ring-2 transition-all
                 ${selected.has(w.id) ? 'ring-brand-400' : 'ring-surface-700 hover:ring-surface-500'}`}>
-              <img src={w.url_preview} alt={w.title} referrerPolicy="no-referrer"
-                className="w-full h-48 object-cover"
-                loading="lazy"
-                onDoubleClick={e => { e.stopPropagation(); setPreview(w.url_full) }} />
+              {w.media_type === 'animated'
+                ? <video src={w.url_preview} autoPlay loop muted playsInline
+                    className="w-full h-48 object-cover"
+                    onDoubleClick={e => { e.stopPropagation(); setPreview(w.url_full) }} />
+                : <img src={w.url_preview} alt={w.title} referrerPolicy="no-referrer"
+                    className="w-full h-48 object-cover"
+                    loading="lazy"
+                    onDoubleClick={e => { e.stopPropagation(); setPreview(w.url_full) }} />
+              }
               <div className={`absolute top-2 left-2 w-5 h-5 rounded border-2 flex items-center justify-center transition-all
                 ${selected.has(w.id) ? 'bg-brand-400 border-brand-400' : 'bg-black/50 border-white/50 group-hover:border-white'}`}>
                 {selected.has(w.id) && <span className="text-black text-xs font-bold">✓</span>}
@@ -214,6 +229,11 @@ function ManageTab({ token }) {
                   className="opacity-0 group-hover:opacity-100 transition-all bg-white/20 hover:bg-white/30
                              text-white text-xs font-semibold px-2 py-1 rounded-lg">
                   View
+                <button onClick={e => { e.stopPropagation(); setEditTarget(w) }}
+                  className="opacity-0 group-hover:opacity-100 transition-all bg-blue-500 hover:bg-blue-600
+                            text-white text-xs font-semibold px-2 py-1 rounded-lg">
+                  Edit
+                </button>
                 </button>
                 <button onClick={e => { e.stopPropagation(); setConfirmTarget(w); setConfirm('one') }}
                   className="opacity-0 group-hover:opacity-100 transition-all bg-red-500 hover:bg-red-600
@@ -262,6 +282,95 @@ function ManageTab({ token }) {
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+function EditModal({ wallpaper, categories, token, onClose, onSaved }) {
+  const [title,      setTitle]      = useState(wallpaper.title || '')
+  const [categoryId, setCategoryId] = useState(wallpaper.category_id || '')
+  const [tags,       setTags]       = useState(
+    Array.isArray(wallpaper.tags)
+      ? wallpaper.tags.join(', ')
+      : ''
+  )
+  const [saving,  setSaving]  = useState(false)
+  const [error,   setError]   = useState(null)
+  const headers = { Authorization: `Bearer ${token}` }
+
+  const handleSave = async () => {
+    setSaving(true); setError(null)
+    try {
+      const params = new URLSearchParams()
+      params.append('title', title)
+      if (categoryId) params.append('category_id', categoryId)
+      params.append('tags', tags)
+      await axios.patch(
+        `${API}/api/v1/admin/wallpapers/${wallpaper.id}?${params}`,
+        {}, { headers }
+      )
+      onSaved()
+    } catch (e) {
+      setError(e.response?.data?.detail || 'Save failed.')
+    } finally {
+      setSaving(false) }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center px-4">
+      <div className="bg-surface-800 rounded-2xl p-6 max-w-md w-full border border-surface-700">
+        <h3 className="text-white font-bold mb-4">Edit Wallpaper</h3>
+
+        {/* Preview */}
+        {wallpaper.media_type === 'animated'
+          ? <video src={wallpaper.url_preview} autoPlay loop muted playsInline
+              className="w-full h-32 object-cover rounded-lg mb-4" />
+          : <img src={wallpaper.url_preview} alt="" referrerPolicy="no-referrer"
+              className="w-full h-32 object-cover rounded-lg mb-4" />
+        }
+
+        <div className="flex flex-col gap-3">
+          <div>
+            <label className="text-gray-400 text-xs mb-1 block">Title</label>
+            <input type="text" value={title} onChange={e => setTitle(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-surface-700 border border-surface-600
+                         text-white text-sm outline-none focus:ring-2 focus:ring-brand-400" />
+          </div>
+
+          <div>
+            <label className="text-gray-400 text-xs mb-1 block">Category</label>
+            <select value={categoryId} onChange={e => setCategoryId(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-surface-700 border border-surface-600
+                         text-white text-sm outline-none focus:ring-2 focus:ring-brand-400">
+              <option value="">No category</option>
+              {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-gray-400 text-xs mb-1 block">Tags (comma separated)</label>
+            <input type="text" value={tags} onChange={e => setTags(e.target.value)}
+              placeholder="cyberpunk, neon, city"
+              className="w-full px-3 py-2 rounded-lg bg-surface-700 border border-surface-600
+                         text-white text-sm outline-none focus:ring-2 focus:ring-brand-400" />
+          </div>
+
+          {error && <p className="text-red-400 text-xs">{error}</p>}
+
+          <div className="flex gap-3 mt-2">
+            <button onClick={onClose}
+              className="flex-1 px-4 py-2 rounded-lg bg-surface-700 text-gray-400
+                         hover:text-white text-sm transition-all">
+              Cancel
+            </button>
+            <button onClick={handleSave} disabled={saving}
+              className="flex-1 px-4 py-2 rounded-lg bg-brand-400 hover:bg-brand-500
+                         text-black font-semibold text-sm transition-all disabled:opacity-50">
+              {saving ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

@@ -36,10 +36,10 @@ export default function WallpaperCard({ wallpaper, onClick, index = 0 }) {
         {resolution_label}
       </span>
 
-      {/* Badge LIVE — esquina superior izquierda */}
+      {/* Badge LIVE */}
       {isAnimated && (
-        <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-bold
-                         bg-brand-400 text-black tracking-wide">
+        <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-xs
+                        bg-black/60 backdrop-blur-sm text-gray-300 font-mono">
           LIVE
         </span>
       )}
