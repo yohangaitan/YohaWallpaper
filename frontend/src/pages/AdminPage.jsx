@@ -82,7 +82,7 @@ export default function AdminPage() {
               <button key={t} onClick={() => setTab(t)}
                 className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all
                   ${tab === t ? 'bg-brand-400 text-black' : 'text-gray-400 hover:text-white hover:bg-surface-700'}`}>
-                {t === 'manage' ? 'Manage' : t === 'import' ? 'Import from Wallhaven' : ' Upload Animated'}
+                {t === 'manage' ? 'Manage' : t === 'import' ? 'Import from Wallhaven' : '🎬 Upload Animated'}
               </button>
             ))}
           </div>
@@ -96,21 +96,12 @@ export default function AdminPage() {
       {tab === 'manage' ? <ManageTab token={token} />
       : tab === 'import' ? <ImportTab token={token} />
       : <UploadAnimatedTab token={token} />}
-      {editTarget && (
-        <EditModal
-          wallpaper={editTarget}
-          categories={categories}
-          token={token}
-          onClose={() => setEditTarget(null)}
-          onSaved={() => { setEditTarget(null); load() }}
-        />
-      )}
     </div>
   )
 }
 
 function ManageTab({ token }) {
-  const [editTarget, setEditTarget] = useState(null)
+  const [editTarget, setEditTarget]       = useState(null)
   const [wallpapers, setWallpapers]       = useState([])
   const [page, setPage]                   = useState(1)
   const [totalPages, setTotalPages]       = useState(1)
@@ -229,11 +220,11 @@ function ManageTab({ token }) {
                   className="opacity-0 group-hover:opacity-100 transition-all bg-white/20 hover:bg-white/30
                              text-white text-xs font-semibold px-2 py-1 rounded-lg">
                   View
+                </button>
                 <button onClick={e => { e.stopPropagation(); setEditTarget(w) }}
                   className="opacity-0 group-hover:opacity-100 transition-all bg-blue-500 hover:bg-blue-600
-                            text-white text-xs font-semibold px-2 py-1 rounded-lg">
+                             text-white text-xs font-semibold px-2 py-1 rounded-lg">
                   Edit
-                </button>
                 </button>
                 <button onClick={e => { e.stopPropagation(); setConfirmTarget(w); setConfirm('one') }}
                   className="opacity-0 group-hover:opacity-100 transition-all bg-red-500 hover:bg-red-600
@@ -282,6 +273,16 @@ function ManageTab({ token }) {
           </div>
         </div>
       )}
+
+      {editTarget && (
+        <EditModal
+          wallpaper={editTarget}
+          categories={categories}
+          token={token}
+          onClose={() => setEditTarget(null)}
+          onSaved={() => { setEditTarget(null); load() }}
+        />
+      )}
     </div>
   )
 }
@@ -290,12 +291,10 @@ function EditModal({ wallpaper, categories, token, onClose, onSaved }) {
   const [title,      setTitle]      = useState(wallpaper.title || '')
   const [categoryId, setCategoryId] = useState(wallpaper.category_id || '')
   const [tags,       setTags]       = useState(
-    Array.isArray(wallpaper.tags)
-      ? wallpaper.tags.join(', ')
-      : ''
+    Array.isArray(wallpaper.tags) ? wallpaper.tags.join(', ') : ''
   )
-  const [saving,  setSaving]  = useState(false)
-  const [error,   setError]   = useState(null)
+  const [saving, setSaving] = useState(false)
+  const [error,  setError]  = useState(null)
   const headers = { Authorization: `Bearer ${token}` }
 
   const handleSave = async () => {
@@ -312,8 +311,7 @@ function EditModal({ wallpaper, categories, token, onClose, onSaved }) {
       onSaved()
     } catch (e) {
       setError(e.response?.data?.detail || 'Save failed.')
-    } finally {
-      setSaving(false) }
+    } finally { setSaving(false) }
   }
 
   return (
@@ -321,7 +319,6 @@ function EditModal({ wallpaper, categories, token, onClose, onSaved }) {
       <div className="bg-surface-800 rounded-2xl p-6 max-w-md w-full border border-surface-700">
         <h3 className="text-white font-bold mb-4">Edit Wallpaper</h3>
 
-        {/* Preview */}
         {wallpaper.media_type === 'animated'
           ? <video src={wallpaper.url_preview} autoPlay loop muted playsInline
               className="w-full h-32 object-cover rounded-lg mb-4" />
@@ -336,7 +333,6 @@ function EditModal({ wallpaper, categories, token, onClose, onSaved }) {
               className="w-full px-3 py-2 rounded-lg bg-surface-700 border border-surface-600
                          text-white text-sm outline-none focus:ring-2 focus:ring-brand-400" />
           </div>
-
           <div>
             <label className="text-gray-400 text-xs mb-1 block">Category</label>
             <select value={categoryId} onChange={e => setCategoryId(e.target.value)}
@@ -346,7 +342,6 @@ function EditModal({ wallpaper, categories, token, onClose, onSaved }) {
               {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
-
           <div>
             <label className="text-gray-400 text-xs mb-1 block">Tags (comma separated)</label>
             <input type="text" value={tags} onChange={e => setTags(e.target.value)}
@@ -585,7 +580,6 @@ function UploadAnimatedTab({ token }) {
     if (!f) return
     setFile(f)
     setPreview(URL.createObjectURL(f))
-    // Auto-detectar resolución
     const video = document.createElement('video')
     video.preload = 'metadata'
     video.onloadedmetadata = () => {
@@ -624,13 +618,9 @@ function UploadAnimatedTab({ token }) {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 flex flex-col gap-6">
-
-      {/* Upload area */}
       <div className="bg-surface-800 border border-surface-700 rounded-2xl p-5">
         <h2 className="text-white font-semibold mb-1">Upload Animated Wallpaper</h2>
         <p className="text-gray-500 text-sm mb-4">MP4 or WebM · Max 75MB</p>
-
-        {/* File picker */}
         <label className={`flex flex-col items-center justify-center w-full h-40 rounded-xl border-2 border-dashed
           cursor-pointer transition-all
           ${file ? 'border-brand-400/50 bg-brand-400/5' : 'border-surface-600 hover:border-surface-500 bg-surface-700/50'}`}>
@@ -643,23 +633,18 @@ function UploadAnimatedTab({ token }) {
               </>
           }
         </label>
-
-        {/* Preview */}
         {preview && (
           <video src={preview} autoPlay loop muted playsInline
             className="w-full rounded-xl mt-4 max-h-48 object-contain bg-black" />
         )}
       </div>
 
-      {/* Metadata */}
       <div className="bg-surface-800 border border-surface-700 rounded-2xl p-5 flex flex-col gap-3">
         <h3 className="text-white font-semibold text-sm">Metadata</h3>
-
         <input type="text" value={title} onChange={e => setTitle(e.target.value)}
           placeholder="Title *"
           className="w-full px-3 py-2 rounded-lg bg-surface-700 border border-surface-600
                      text-white placeholder-gray-500 text-sm outline-none focus:ring-2 focus:ring-brand-400" />
-
         <div className="flex gap-3">
           <input type="number" value={width} onChange={e => setWidth(e.target.value)}
             placeholder="Width (px) *"
@@ -670,25 +655,21 @@ function UploadAnimatedTab({ token }) {
             className="flex-1 px-3 py-2 rounded-lg bg-surface-700 border border-surface-600
                        text-white placeholder-gray-500 text-sm outline-none focus:ring-2 focus:ring-brand-400" />
         </div>
-
         <input type="text" value={tags} onChange={e => setTags(e.target.value)}
           placeholder="Tags (comma separated: cyberpunk, neon, city)"
           className="w-full px-3 py-2 rounded-lg bg-surface-700 border border-surface-600
                      text-white placeholder-gray-500 text-sm outline-none focus:ring-2 focus:ring-brand-400" />
-
         <select value={categoryId} onChange={e => setCategoryId(e.target.value)}
           className="w-full px-3 py-2 rounded-lg bg-surface-700 border border-surface-600
                      text-white text-sm outline-none focus:ring-2 focus:ring-brand-400">
           <option value="">No category</option>
           {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
-
         <button onClick={handleUpload} disabled={uploading || !file || !title}
           className="w-full py-2.5 rounded-lg bg-brand-400 hover:bg-brand-500
                      text-black font-semibold text-sm transition-all disabled:opacity-40">
           {uploading ? 'Uploading...' : 'Upload Wallpaper'}
         </button>
-
         {result?.success && (
           <p className="text-green-400 text-sm bg-green-500/10 px-3 py-2 rounded-lg">✓ {result.success}</p>
         )}
