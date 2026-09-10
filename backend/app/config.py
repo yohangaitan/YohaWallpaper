@@ -39,3 +39,56 @@ def get_settings() -> Settings:
     return Settings()
 
 settings = get_settings()
+
+from functools import lru_cache
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+class Settings(BaseSettings):
+    app_name: str    = "YohaWallpaper API"
+    app_version: str = "0.1.0"
+    app_env: str     = "development"
+    database_url: str      = "sqlite:///./yohawallpaper.db"
+    wallhaven_api_key: str = ""
+    pexels_api_key: str    = ""
+    app_cors_origins: str  = "http://localhost:5173"
+    admin_token: str       = ""
+    redis_url: str         = "redis://localhost:6379"
+    cache_ttl_wallpapers:  int = 300
+    cache_ttl_categories:  int = 3600
+    cache_ttl_detail:      int = 600
+
+    # Cloudflare R2
+    r2_access_key_id:     str = ""
+    r2_secret_access_key: str = ""
+    r2_bucket_name:       str = ""
+    r2_account_id:        str = ""
+    r2_public_url:        str = ""
+
+    @property
+    def r2_endpoint_url(self) -> str:
+        return f"https://{self.r2_account_id}.r2.cloudflarestorage.com"
+
+    @property
+    def cors_origins_list(self) -> list[str]:
+        return [o.strip() for o in self.app_cors_origins.split(",")]
+
+    @property
+    def is_production(self) -> bool:
+        return self.app_env == "production"
+
+    @property
+    def is_sqlite(self) -> bool:
+        return "sqlite" in self.database_url
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        extra="ignore",
+    )
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
+
+settings = get_settings()

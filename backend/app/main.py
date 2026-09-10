@@ -12,6 +12,7 @@ from app.database import create_db_and_tables
 import app.models.wallpaper  # noqa: F401
 from app.api.v1 import wallpapers as wallpapers_router
 from app.api.v1 import admin as admin_router
+from app.api.v1 import animated as animated_router
 
 # ── Rate limiter global ───────────────────────────────────────────────────────
 limiter = Limiter(key_func=get_remote_address, default_limits=["200/minute"])
@@ -71,6 +72,7 @@ app.add_middleware(
 # Routers
 app.include_router(wallpapers_router.router, prefix="/api/v1")
 app.include_router(admin_router.router, prefix="/api/v1")
+app.include_router(animated_router.router, prefix="/api/v1")
 
 
 @app.get("/health", tags=["Sistema"])
