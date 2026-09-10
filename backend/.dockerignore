@@ -1,5 +1,7 @@
-fly.toml
-.git/
-__pycache__/
-.envrc
+*.log
+*.db
+__pycache__
+.env
+venv/
 .venv/
+*.pyc
