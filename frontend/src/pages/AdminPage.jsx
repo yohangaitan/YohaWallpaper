@@ -78,11 +78,11 @@ export default function AdminPage() {
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
           <h1 className="font-bold text-lg">Admin Panel</h1>
           <div className="flex gap-1">
-            {['manage', 'import'].map(t => (
+            {['manage', 'import', 'upload'].map(t => (
               <button key={t} onClick={() => setTab(t)}
                 className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all
                   ${tab === t ? 'bg-brand-400 text-black' : 'text-gray-400 hover:text-white hover:bg-surface-700'}`}>
-                {t === 'manage' ? 'Manage' : 'Import from Wallhaven'}
+                {t === 'manage' ? 'Manage' : t === 'import' ? 'Import from Wallhaven' : '🎬 Upload Animated'}
               </button>
             ))}
           </div>
@@ -93,7 +93,9 @@ export default function AdminPage() {
           </button>
         </div>
       </div>
-      {tab === 'manage' ? <ManageTab token={token} /> : <ImportTab token={token} />}
+      {tab === 'manage' ? <ManageTab token={token} />
+      : tab === 'import' ? <ImportTab token={token} />
+      : <UploadAnimatedTab token={token} />}
     </div>
   )
 }
@@ -448,6 +450,143 @@ function ImportTab({ token }) {
       )}
 
       {preview && <PreviewModal url={preview} onClose={() => setPreview(null)} />}
+    </div>
+  )
+}
+
+function UploadAnimatedTab({ token }) {
+  const [categories, setCategories] = useState([])
+  const [categoryId, setCategoryId] = useState('')
+  const [title,      setTitle]      = useState('')
+  const [width,      setWidth]      = useState('')
+  const [height,     setHeight]     = useState('')
+  const [tags,       setTags]       = useState('')
+  const [file,       setFile]       = useState(null)
+  const [preview,    setPreview]    = useState(null)
+  const [uploading,  setUploading]  = useState(false)
+  const [result,     setResult]     = useState(null)
+  const headers = { Authorization: `Bearer ${token}` }
+
+  useEffect(() => {
+    axios.get(`${API}/api/v1/wallpapers/categories`).then(r => setCategories(r.data))
+  }, [])
+
+  const handleFile = (e) => {
+    const f = e.target.files[0]
+    if (!f) return
+    setFile(f)
+    setPreview(URL.createObjectURL(f))
+    // Auto-detectar resolución
+    const video = document.createElement('video')
+    video.preload = 'metadata'
+    video.onloadedmetadata = () => {
+      setWidth(video.videoWidth)
+      setHeight(video.videoHeight)
+      URL.revokeObjectURL(video.src)
+    }
+    video.src = URL.createObjectURL(f)
+  }
+
+  const handleUpload = async () => {
+    if (!file || !title || !width || !height) {
+      setResult({ error: 'File, title, width and height are required.' })
+      return
+    }
+    setUploading(true)
+    setResult(null)
+    const form = new FormData()
+    form.append('file', file)
+    form.append('title', title)
+    form.append('width', width)
+    form.append('height', height)
+    form.append('tags', tags)
+    if (categoryId) form.append('category_id', categoryId)
+
+    try {
+      const r = await axios.post(`${API}/api/v1/admin/animated/upload`, form, { headers })
+      setResult({ success: r.data.message })
+      setFile(null); setPreview(null); setTitle(''); setTags(''); setCategoryId('')
+    } catch (e) {
+      setResult({ error: e.response?.data?.detail || 'Upload failed.' })
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto px-4 py-6 flex flex-col gap-6">
+
+      {/* Upload area */}
+      <div className="bg-surface-800 border border-surface-700 rounded-2xl p-5">
+        <h2 className="text-white font-semibold mb-1">Upload Animated Wallpaper</h2>
+        <p className="text-gray-500 text-sm mb-4">MP4 or WebM · Max 50MB</p>
+
+        {/* File picker */}
+        <label className={`flex flex-col items-center justify-center w-full h-40 rounded-xl border-2 border-dashed
+          cursor-pointer transition-all
+          ${file ? 'border-brand-400/50 bg-brand-400/5' : 'border-surface-600 hover:border-surface-500 bg-surface-700/50'}`}>
+          <input type="file" accept="video/mp4,video/webm" className="hidden" onChange={handleFile} />
+          {file
+            ? <span className="text-brand-400 text-sm font-medium">{file.name}</span>
+            : <>
+                <span className="text-3xl mb-2">🎬</span>
+                <span className="text-gray-400 text-sm">Click to select MP4 or WebM</span>
+              </>
+          }
+        </label>
+
+        {/* Preview */}
+        {preview && (
+          <video src={preview} autoPlay loop muted playsInline
+            className="w-full rounded-xl mt-4 max-h-48 object-contain bg-black" />
+        )}
+      </div>
+
+      {/* Metadata */}
+      <div className="bg-surface-800 border border-surface-700 rounded-2xl p-5 flex flex-col gap-3">
+        <h3 className="text-white font-semibold text-sm">Metadata</h3>
+
+        <input type="text" value={title} onChange={e => setTitle(e.target.value)}
+          placeholder="Title *"
+          className="w-full px-3 py-2 rounded-lg bg-surface-700 border border-surface-600
+                     text-white placeholder-gray-500 text-sm outline-none focus:ring-2 focus:ring-brand-400" />
+
+        <div className="flex gap-3">
+          <input type="number" value={width} onChange={e => setWidth(e.target.value)}
+            placeholder="Width (px) *"
+            className="flex-1 px-3 py-2 rounded-lg bg-surface-700 border border-surface-600
+                       text-white placeholder-gray-500 text-sm outline-none focus:ring-2 focus:ring-brand-400" />
+          <input type="number" value={height} onChange={e => setHeight(e.target.value)}
+            placeholder="Height (px) *"
+            className="flex-1 px-3 py-2 rounded-lg bg-surface-700 border border-surface-600
+                       text-white placeholder-gray-500 text-sm outline-none focus:ring-2 focus:ring-brand-400" />
+        </div>
+
+        <input type="text" value={tags} onChange={e => setTags(e.target.value)}
+          placeholder="Tags (comma separated: cyberpunk, neon, city)"
+          className="w-full px-3 py-2 rounded-lg bg-surface-700 border border-surface-600
+                     text-white placeholder-gray-500 text-sm outline-none focus:ring-2 focus:ring-brand-400" />
+
+        <select value={categoryId} onChange={e => setCategoryId(e.target.value)}
+          className="w-full px-3 py-2 rounded-lg bg-surface-700 border border-surface-600
+                     text-white text-sm outline-none focus:ring-2 focus:ring-brand-400">
+          <option value="">No category</option>
+          {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+        </select>
+
+        <button onClick={handleUpload} disabled={uploading || !file || !title}
+          className="w-full py-2.5 rounded-lg bg-brand-400 hover:bg-brand-500
+                     text-black font-semibold text-sm transition-all disabled:opacity-40">
+          {uploading ? 'Uploading...' : 'Upload Wallpaper'}
+        </button>
+
+        {result?.success && (
+          <p className="text-green-400 text-sm bg-green-500/10 px-3 py-2 rounded-lg">✓ {result.success}</p>
+        )}
+        {result?.error && (
+          <p className="text-red-400 text-sm bg-red-500/10 px-3 py-2 rounded-lg">✗ {result.error}</p>
+        )}
+      </div>
     </div>
   )
 }

@@ -5,7 +5,7 @@ import { fetchWallpapers } from '../services/api'
 import useSEO from '../hooks/useSEO'
 import PaginationBar from '../components/PaginationBar'
 
-export default function Home({ searchQuery, sort = 'default', categoryId, categoryName, resolution, mobileOnly, onSearch }) {
+export default function Home({ searchQuery, sort = 'default', categoryId, categoryName, resolution, mobileOnly, animatedOnly, onSearch }) {
   const [wallpapers, setWallpapers] = useState([])
   const [pagination, setPagination] = useState(null)
   const [page, setPage]             = useState(1)
@@ -37,7 +37,8 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
       if (sort && sort !== 'default') params.sort = sort
       if (categoryId)  params.category_id = categoryId
       if (resolution)  params.resolution  = resolution
-      if (mobileOnly)  params.orientation = 'portrait'
+      if (mobileOnly)   params.orientation  = 'portrait'
+      if (animatedOnly) params.media_type   = 'animated'
       if (searchQuery) {
         params.q = searchQuery
         if (document.cookie.includes('googtrans=/en/es')) params.lang = 'es'
@@ -48,12 +49,12 @@ export default function Home({ searchQuery, sort = 'default', categoryId, catego
       setError('Could not connect to the server.')
     }
     finally { setLoading(false) }
-  }, [page, sort, searchQuery, categoryId, resolution, mobileOnly, perPage])
+  }, [page, sort, searchQuery, categoryId, resolution, mobileOnly, animatedOnly, perPage])
 
   useEffect(() => {
     setPage(1)
     window.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [sort, searchQuery, categoryId, resolution, mobileOnly])
+  }, [sort, searchQuery, categoryId, resolution, mobileOnly, animatedOnly])
 
   useEffect(() => { load() }, [load])
 

@@ -8,11 +8,12 @@ import Home        from './pages/Home'
 import AdminPage   from './pages/AdminPage'
 
 function MainLayout() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [sort,        setSort]        = useState('default')
-  const [category,    setCategory]    = useState(null)
-  const [resolution,  setResolution]  = useState(null)
-  const [mobileOnly,  setMobileOnly]  = useState(false)
+  const [searchQuery,  setSearchQuery]  = useState('')
+  const [sort,         setSort]         = useState('default')
+  const [category,     setCategory]     = useState(null)
+  const [resolution,   setResolution]   = useState(null)
+  const [mobileOnly,   setMobileOnly]   = useState(false)
+  const [animatedOnly, setAnimatedOnly] = useState(false)
 
   const handleSearch = (q) => {
     setSearchQuery(q)
@@ -24,11 +25,13 @@ function MainLayout() {
     setCategory(null)
   }
 
-  const handleMobileToggle = () => setMobileOnly(v => !v)
+  const handleMobileToggle   = () => setMobileOnly(v => !v)
+  const handleAnimatedToggle = () => setAnimatedOnly(v => !v)
 
   const handleClearFilters = () => {
     setMobileOnly(false)
     setResolution(null)
+    setAnimatedOnly(false)
   }
 
   return (
@@ -48,6 +51,8 @@ function MainLayout() {
         onMobileToggle={handleMobileToggle}
         resolution={resolution}
         onResolutionChange={setResolution}
+        animatedOnly={animatedOnly}
+        onAnimatedToggle={handleAnimatedToggle}
         onClearFilters={handleClearFilters}
       />
       <div className="flex-1">
@@ -58,6 +63,7 @@ function MainLayout() {
           categoryName={category?.name ?? null}
           resolution={resolution}
           mobileOnly={mobileOnly}
+          animatedOnly={animatedOnly}
           onSearch={handleSearch}
         />
       </div>

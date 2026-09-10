@@ -88,14 +88,26 @@ export default function WallpaperModal({ wallpaper, onClose, onTagSearch, onWall
         <div className="relative w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10"
              onClick={e => e.stopPropagation()}>
 
-          {/* Imagen */}
+          {/* Imagen o Video */}
           <div className="relative bg-black">
-            <img
-              src={url_full}
-              alt={title}
-              referrerPolicy="no-referrer"
-              className="w-full object-contain max-h-[65vh] mx-auto block"
-            />
+            {current.media_type === 'animated' ? (
+              <video
+                src={url_full}
+                className="w-full object-contain max-h-[65vh] mx-auto block"
+                autoPlay
+                loop
+                muted
+                playsInline
+                controls
+              />
+            ) : (
+              <img
+                src={url_full}
+                alt={title}
+                referrerPolicy="no-referrer"
+                className="w-full object-contain max-h-[65vh] mx-auto block"
+              />
+            )}
 
             {/* Botón cerrar */}
             <button onClick={onClose}
