@@ -82,7 +82,7 @@ export default function AdminPage() {
               <button key={t} onClick={() => setTab(t)}
                 className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all
                   ${tab === t ? 'bg-brand-400 text-black' : 'text-gray-400 hover:text-white hover:bg-surface-700'}`}>
-                {t === 'manage' ? 'Manage' : t === 'import' ? 'Import from Wallhaven' : '🎬 Upload Animated'}
+                {t === 'manage' ? 'Manage' : t === 'import' ? 'Import from Wallhaven' : 'Upload Animated'}
               </button>
             ))}
           </div>
