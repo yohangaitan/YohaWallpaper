@@ -22,7 +22,7 @@ export default function FilterBar({ mobileOnly, onMobileToggle, resolution, onRe
 
   const currentRes = RESOLUTIONS.find(r => r.value === resolution)?.label ?? 'Resolution'
 
-  const btnBase = 'flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200'
+  const btnBase = 'flex items-center gap-1.5 px-3 py-1.5 sm:px-4 rounded-full text-sm font-medium transition-all duration-200'
   const btnActive = 'bg-brand-400 text-black shadow-md shadow-brand-400/30'
   const btnIdle = 'text-gray-400 hover:text-white hover:bg-white/10 border border-surface-600 hover:border-surface-500'
 
@@ -37,13 +37,13 @@ export default function FilterBar({ mobileOnly, onMobileToggle, resolution, onRe
           {/* Mobile toggle */}
           <button onClick={onMobileToggle} className={`${btnBase} ${mobileOnly ? btnActive : btnIdle}`}>
             <Smartphone size={14} />
-            <span className="hidden sm:inline">Mobile</span>
+            <span>Mobile</span>
           </button>
 
           {/* Animated toggle */}
           <button onClick={onAnimatedToggle} className={`${btnBase} ${animatedOnly ? btnActive : btnIdle}`}>
             <Play size={14} />
-            <span className="hidden sm:inline">Animated</span>
+            <span>Animated</span>
           </button>
 
           {/* Resolution dropdown */}
@@ -52,7 +52,7 @@ export default function FilterBar({ mobileOnly, onMobileToggle, resolution, onRe
             onClick={() => setResOpen(v => !v)}
             className={`${btnBase} ${resolution ? btnActive : btnIdle}`}>
             <Monitor size={14} />
-            <span className="hidden sm:inline">{resolution ? currentRes : 'Resolution'}</span>
+            <span>{resolution ? currentRes : 'Resolution'}</span>
             <ChevronDown size={12} className={`transition-transform duration-200 ${resOpen ? 'rotate-180' : ''}`} />
           </button>
 
