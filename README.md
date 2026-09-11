@@ -207,8 +207,6 @@ Push to `main` — Vercel auto-deploys via GitHub integration.
 - [ ] Dynamic meta tags per individual wallpaper (SEO)
 - [ ] 30,000+ static wallpapers
 - [ ] Upload 100+ original animated wallpapers
-- [ ] Google AdSense monetization via [plyos.me](https://plyos.me)
-- [ ] TikTok / Reels traffic strategy
 
 ---
 
@@ -225,9 +223,6 @@ The search bar accepts queries in English or Spanish. If you type in Spanish, th
 
 **How do I access the admin panel?**  
 The admin panel lives at `/admin` and requires a secret token. It's intended for the site owner only. If you're running your own instance, set `ADMIN_TOKEN` in your `.env` file.
-
-**Why is the site in English if you're from Panama?**  
-YohaWallpaper targets a global English-speaking audience for SEO and AdSense purposes. A Google Translate toggle in the navbar lets Spanish speakers switch to ES.
 
 **The API is returning `stopped` / not responding — what do I do?**  
 The backend runs on Fly.io. If the machine is stopped, restart it with:
