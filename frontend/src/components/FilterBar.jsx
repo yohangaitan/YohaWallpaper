@@ -37,24 +37,24 @@ export default function FilterBar({ mobileOnly, onMobileToggle, resolution, onRe
           {/* Mobile toggle */}
           <button onClick={onMobileToggle} className={`${btnBase} ${mobileOnly ? btnActive : btnIdle}`}>
             <Smartphone size={14} />
-            <span>Mobile</span>
+            <span className="hidden sm:inline">Mobile</span>
           </button>
 
           {/* Animated toggle */}
           <button onClick={onAnimatedToggle} className={`${btnBase} ${animatedOnly ? btnActive : btnIdle}`}>
             <Play size={14} />
-            <span>Animated</span>
+            <span className="hidden sm:inline">Animated</span>
           </button>
 
           {/* Resolution dropdown */}
           <div ref={resRef} className="relative">
-            <button
-              onClick={() => setResOpen(v => !v)}
-              className={`${btnBase} ${resolution ? btnActive : btnIdle}`}>
-              <Monitor size={14} />
-              <span>{resolution ? currentRes : 'Resolution'}</span>
-              <ChevronDown size={12} className={`transition-transform duration-200 ${resOpen ? 'rotate-180' : ''}`} />
-            </button>
+          <button
+            onClick={() => setResOpen(v => !v)}
+            className={`${btnBase} ${resolution ? btnActive : btnIdle}`}>
+            <Monitor size={14} />
+            <span className="hidden sm:inline">{resolution ? currentRes : 'Resolution'}</span>
+            <ChevronDown size={12} className={`transition-transform duration-200 ${resOpen ? 'rotate-180' : ''}`} />
+          </button>
 
             {resOpen && (
               <div className="absolute top-full left-0 mt-2 z-50
