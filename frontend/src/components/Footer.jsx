@@ -21,10 +21,17 @@ export default function Footer() {
               Yoha<span className="text-brand-400">Wallpaper</span>
             </span>
           </div>
-          <p className="text-gray-600 text-sm">
+          {/* Desktop: full credits */}
+          <p className="hidden sm:block text-gray-600 text-sm">
             © {year} YohaWallpaper · Images courtesy of{' '}
             <a href="https://wallhaven.cc" target="_blank" rel="noopener"
-               className="text-brand-400 hover:underline">Wallhaven</a>
+              className="text-brand-400 hover:underline">Wallhaven</a>
+            {' · '}Animated wallpapers by YohaWallpaper
+          </p>
+
+          {/* Mobile: collapsed */}
+          <p className="sm:hidden text-gray-600 text-sm text-center">
+            © {year} YohaWallpaper
           </p>
           <div className="flex gap-4 text-sm text-gray-600">
             <span>
