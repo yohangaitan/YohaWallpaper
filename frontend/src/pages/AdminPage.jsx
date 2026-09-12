@@ -444,10 +444,10 @@ function ImportTab({ token }) {
 
       <div className="flex gap-2 mb-6 flex-wrap">
         {[
-          { label: '🔀 Random',          value: 'random'    },
-          { label: '👁 Most Viewed',     value: 'views'     },
-          { label: '⬇ Most Downloaded', value: 'downloads' },
-          { label: '⭐ Top',             value: 'toplist'   },
+          { label: 'Random',          value: 'random'    },
+          { label: 'Most Viewed',     value: 'views'     },
+          { label: 'Most Downloaded', value: 'downloads' },
+          { label: 'Top',             value: 'toplist'   },
         ].map(s => (
           <button key={s.value}
             onClick={() => { setSorting(s.value); search(1, query, s.value) }}
@@ -470,7 +470,7 @@ function ImportTab({ token }) {
           <button onClick={() => setHideImported(v => !v)}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-all
               ${hideImported ? 'bg-brand-400/20 text-brand-400 border border-brand-400/30' : 'text-gray-400 hover:text-white hover:bg-surface-700'}`}>
-            {hideImported ? '👁 Show all' : '🙈 Hide imported'}
+            {hideImported ? 'Show all' : 'Hide imported'}
           </button>
           <button onClick={selectAllAvailable} className="px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-surface-700 transition-all">Select all new</button>
           <button onClick={() => setSelected(new Set())} className="px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-surface-700 transition-all">Clear</button>
@@ -514,7 +514,7 @@ function ImportTab({ token }) {
                   ${isSelectable
                     ? 'cursor-pointer ring-2 ' + (selected.has(w.id) ? 'ring-brand-400' : 'ring-surface-700 hover:ring-surface-500')
                     : 'opacity-50 ring-2 ' + (w.already_in_db ? 'ring-yellow-500/40' : 'ring-red-500/30')}`}>
-                <img src={w.url_preview} alt={w.id} referrerPolicy="no-referrer"
+                <img src={`https://api.plyos.me/api/v1/admin/proxy-image?url=${encodeURIComponent(w.url_preview)}`} alt={w.id} referrerPolicy="no-referrer"
                   className="w-full h-48 object-cover" loading="lazy"
                   onDoubleClick={e => { e.stopPropagation(); setPreview(`https://w.wallhaven.cc/full/${w.id.slice(0,2)}/wallhaven-${w.id}.jpg`) }} />
                 {isSelectable && (
