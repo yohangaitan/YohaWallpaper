@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException, Depends, Query
-from fastapi.responses import StreamingResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlmodel import select
 from sqlalchemy.exc import IntegrityError
@@ -239,23 +238,3 @@ async def wallhaven_import(
         "skipped_duplicate":  skipped_duplicate,
         "message": f"{imported} imported, {skipped_quality} rejected (quality), {skipped_duplicate} already existed."
     }
-
-# ── Proxy de imágenes ─────────────────────────────────────────────────────────
-# Descarga la imagen desde Wallhaven en el servidor y la reenvía al browser
-# Evita el bloqueo ERR_BLOCKED_BY_ORB que ocurre cuando el browser
-# intenta cargar imágenes de Wallhaven directamente desde otro dominio
-@router.get("/proxy-image")
-async def proxy_image(url: str):
-    async with httpx.AsyncClient(timeout=10) as client:  # timeout de 10s máximo
-        # User-Agent normal para que Wallhaven no bloquee el request
-        r = await client.get(url, headers={"User-Agent": "Mozilla/5.0"})
-    
-    # Devuelve la imagen con headers CORS para que el browser la acepte
-    return StreamingResponse(
-        iter([r.content]),
-        media_type=r.headers.get("content-type", "image/jpeg"),
-        headers={
-            "Access-Control-Allow-Origin": "*",
-            "Cache-Control": "public, max-age=3600",
-        }
-    )

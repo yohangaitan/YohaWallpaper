@@ -514,7 +514,7 @@ function ImportTab({ token }) {
                   ${isSelectable
                     ? 'cursor-pointer ring-2 ' + (selected.has(w.id) ? 'ring-brand-400' : 'ring-surface-700 hover:ring-surface-500')
                     : 'opacity-50 ring-2 ' + (w.already_in_db ? 'ring-yellow-500/40' : 'ring-red-500/30')}`}>
-                <img src={`https://api.plyos.me/api/v1/admin/proxy-image?url=${encodeURIComponent(w.url_preview)}`} alt={w.id} referrerPolicy="no-referrer"
+                <img src={w.url_preview} alt={w.id} referrerPolicy="no-referrer"
                   className="w-full h-48 object-cover" loading="lazy"
                   onDoubleClick={e => { e.stopPropagation(); setPreview(`https://w.wallhaven.cc/full/${w.id.slice(0,2)}/wallhaven-${w.id}.jpg`) }} />
                 {isSelectable && (
