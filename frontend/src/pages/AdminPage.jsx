@@ -205,7 +205,7 @@ function ManageTab({ token }) {
                 ? <video src={w.url_preview} autoPlay loop muted playsInline
                     className="w-full h-48 object-cover"
                     onDoubleClick={e => { e.stopPropagation(); setPreview(w.url_full) }} />
-                : <img src={w.url_preview} alt={w.title} referrerPolicy="no-referrer"
+                : <img src={`https://api.plyos.me/api/v1/admin/proxy-image?url=${encodeURIComponent(w.url_preview)}`}
                     className="w-full h-48 object-cover"
                     loading="lazy"
                     onDoubleClick={e => { e.stopPropagation(); setPreview(w.url_full) }} />
