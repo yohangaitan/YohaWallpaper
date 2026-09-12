@@ -201,15 +201,6 @@ Push to `main` — Vercel auto-deploys via GitHub integration.
 
 ---
 
-## 🗺️ Roadmap
-
-- [ ] Multi-category support per wallpaper
-- [ ] Dynamic meta tags per individual wallpaper (SEO)
-- [ ] 30,000+ static wallpapers
-- [ ] Upload 100+ original animated wallpapers
-
----
-
 ## ❓ FAQ
 
 **Where do the wallpapers come from?**  
