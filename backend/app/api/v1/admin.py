@@ -238,22 +238,3 @@ async def wallhaven_import(
         "skipped_duplicate":  skipped_duplicate,
         "message": f"{imported} imported, {skipped_quality} rejected (quality), {skipped_duplicate} already existed."
     }
-
-import httpx
-from fastapi.responses import StreamingResponse
-
-# Endpoint para proxear imágenes de Wallhaven desde el backend
-# Evita el bloqueo ERR_BLOCKED_BY_ORB que hace el browser cuando
-# Wallhaven detecta que el request viene de otro dominio
-@router.get("/proxy-image")
-async def proxy_image(url: str):
-    # Hacemos el request desde el servidor con un User-Agent normal
-    # así Wallhaven lo ve como un browser real, no como hotlinking
-    async with httpx.AsyncClient() as client:
-        r = await client.get(url, headers={"User-Agent": "Mozilla/5.0"})
-    
-    # Devolvemos la imagen como stream con su content-type original
-    return StreamingResponse(
-        iter([r.content]),
-        media_type=r.headers.get("content-type", "image/jpeg")
-    )
