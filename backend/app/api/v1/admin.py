@@ -246,7 +246,7 @@ async def wallhaven_import(
 # intenta cargar imágenes de Wallhaven directamente desde otro dominio
 @router.get("/proxy-image")
 async def proxy_image(url: str):
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=10) as client:  # timeout de 10s máximo
         # User-Agent normal para que Wallhaven no bloquee el request
         r = await client.get(url, headers={"User-Agent": "Mozilla/5.0"})
     

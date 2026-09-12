@@ -395,7 +395,7 @@ function ImportTab({ token }) {
     window.scrollTo({ top: 0, behavior: "smooth" })
     try {
       const r = await axios.get(`${API}/api/v1/admin/wallhaven/search`,
-        { params: { q, page: p, sorting: s }, headers })
+        { params: { q, page: p, sorting: s }, headers, timeout: 30000 }) // 30s
       setResults(r.data.results); setLastPage(r.data.last_page); setPage(p)
     } catch { alert('Search failed.') }
     finally { setLoading(false) }
