@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/badge/license-MIT-orange?style=flat-square)](LICENSE)
 [![Wallpapers](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.plyos.me%2Fapi%2Fv1%2Fwallpapers&query=%24.total&label=wallpapers&color=8b5cf6&style=flat-square&suffix=%20wallpapers)](https://yohawallpaper.plyos.me)
 
-![YohaWallpaper Banner](docs/screenshots/banner.png)
+<!--  ![YohaWallpaper Banner](docs/screenshots/banner.png)  -->
 <!-- 💡 Tip: usa una captura panorámica del grid en desktop, o un collage de 3-4 wallpapers destacados -->
 
 </div>
@@ -41,7 +41,7 @@
 <!-- Modal abierto mostrando tags, botón de descarga e imagen/video en grande -->
 
 ### Animated Wallpaper (LIVE)
-![Animated](docs/screenshots/animated-live.png)
+![Animated](docs/screenshots/animated-live.gif)
 <!-- Card con badge LIVE y/o el video reproduciéndose en el modal -->
 
 ### Mobile View
