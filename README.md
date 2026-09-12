@@ -45,7 +45,9 @@
 <!-- Card con badge LIVE y/o el video reproduciéndose en el modal -->
 
 ### Mobile View
-<img src="docs/screenshots/mobile.png" width="350"/>
+<div align="center">
+  <img src="docs/screenshots/mobile.png" width="350"/>
+</div>
 <!-- Vista móvil del grid con el footer colapsado -->
 
 ### Admin Panel
